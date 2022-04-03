@@ -1,5 +1,6 @@
-package com.bamdoliro.stupetition.global.error;
+package com.bamdoliro.stupetition.global.error.exception;
 
+import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
 import lombok.Getter;
 
 @Getter

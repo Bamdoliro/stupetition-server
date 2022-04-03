@@ -1,4 +1,4 @@
-package com.bamdoliro.stupetition.global.error;
+package com.bamdoliro.stupetition.global.error.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
