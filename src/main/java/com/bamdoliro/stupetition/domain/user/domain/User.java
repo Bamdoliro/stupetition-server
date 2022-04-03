@@ -6,6 +6,7 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Table(name = "user_table")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Getter
 public class User extends BaseTimeEntity {
 
     @Id
