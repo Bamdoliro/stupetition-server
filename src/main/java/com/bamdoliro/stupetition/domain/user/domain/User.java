@@ -4,10 +4,7 @@ import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -36,6 +33,15 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "authority", length = 25, nullable = false)
     private Authority authority;
+
+    @Builder
+    public User(School school, String email, String password, Authority authority, Status status) {
+        this.school = school;
+        this.email = email;
+        this.password = password;
+        this.authority = authority;
+        this.status = status;
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
