@@ -3,6 +3,8 @@ package com.bamdoliro.stupetition.domain.user.presentation;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsException;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,5 +27,8 @@ public class UserController {
         userService.createUser(dto);
     }
 
-
+    @PostMapping("/login")
+    public TokenResponseDto loginUser(@RequestBody @Valid LoginUserRequestDto dto) {
+        return userService.loginUser(dto);
+    }
 }
