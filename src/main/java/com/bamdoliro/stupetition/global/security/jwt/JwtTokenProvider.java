@@ -22,15 +22,32 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(String email) {
-        Claims claims = Jwts.claims().setSubject(email);
+    public String createAccessToken(String email) {
+        return createToken(email, JwtProperties.ACCESS_TOKEN_VALID_TIME);
+    }
+
+    public String createRefreshToken(String email) {
+        return createToken(email, JwtProperties.REFRESH_TOKEN_VALID_TIME);
+    }
+
+    public String createToken(String email, long time) {
+        Claims claims = Jwts.claims();
+        claims.put("email", email);
         Date now = new Date();
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + JwtProperties.TOKEN_VALID_TIME))
+                .setExpiration(new Date(now.getTime() + time))
                 .signWith(getSigningKey(SECRET_KEY), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey(SECRET_KEY))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

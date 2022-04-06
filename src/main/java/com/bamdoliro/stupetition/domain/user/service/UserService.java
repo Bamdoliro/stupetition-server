@@ -10,24 +10,33 @@ import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
+import com.bamdoliro.stupetition.global.redis.RedisService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
+import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+
+import static com.bamdoliro.stupetition.global.security.jwt.JwtProperties.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RedisService redisService;
+    private final CookieUtil cookieUtil;
 
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
         validateCreateUserRequest(dto);
-        userRepository.save(createUserFromCreateUserDto(dto));
+        User user = userRepository.save(createUserFromCreateUserDto(dto));
     }
 
     private User createUserFromCreateUserDto(CreateUserRequestDto dto) {
@@ -46,12 +55,21 @@ public class UserService {
                 .ifPresent(user -> { throw UserAlreadyExistsException.EXCEPTION; });
     }
 
-    public TokenResponseDto loginUser(LoginUserRequestDto dto) {
+    public TokenResponseDto loginUser(LoginUserRequestDto dto, HttpServletResponse response) {
         validateLoginUserRequest(dto);
-        String token = jwtTokenProvider.createToken(dto.getEmail());
+
+        final String accessToken = jwtTokenProvider.createAccessToken(dto.getEmail());
+        final String refreshToken = jwtTokenProvider.createRefreshToken(dto.getEmail());
+        redisService.setDataExpire(dto.getEmail(), refreshToken, REFRESH_TOKEN_VALID_TIME);
+
+        Cookie accessTokenCookie = cookieUtil.createCookie(ACCESS_TOKEN_NAME, accessToken, ACCESS_TOKEN_VALID_TIME);
+        Cookie refreshTokenCookie = cookieUtil.createCookie(REFRESH_TOKEN_NAME, refreshToken, REFRESH_TOKEN_VALID_TIME);
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
 
         return TokenResponseDto.builder()
-                .accessToken(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 
