@@ -9,11 +9,14 @@ import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsExceptio
 import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
+import com.bamdoliro.stupetition.global.security.auth.AuthDetails;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,5 +83,17 @@ public class UserService {
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw PasswordMismatchException.EXCEPTION;
         }
+    }
+
+    public GetUserResponseDto getUserInformation(Authentication authentication) {
+        AuthDetails auth = (AuthDetails) authentication.getPrincipal();
+        User user = auth.getUser();
+
+        return GetUserResponseDto.builder()
+                .school(user.getSchool())
+                .email(user.getEmail())
+                .authority(user.getAuthority())
+                .status(user.getStatus())
+                .build();
     }
 }
