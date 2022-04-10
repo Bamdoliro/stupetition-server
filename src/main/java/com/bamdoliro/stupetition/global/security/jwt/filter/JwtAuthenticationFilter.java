@@ -1,9 +1,11 @@
 package com.bamdoliro.stupetition.global.security.jwt.filter;
 
+import com.bamdoliro.stupetition.domain.user.exception.UserNotLoginException;
 import com.bamdoliro.stupetition.global.security.auth.AuthDetailsService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,20 +36,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final Cookie accessTokenCookie = cookieUtil.getCookie(request, ACCESS_TOKEN_NAME);
 
         if (accessTokenCookie != null) {
-            String accessToken = accessTokenCookie.getValue();
-            if (!jwtValidateService.isTokenExpired(accessToken)) {
+            try {
+                String accessToken = accessTokenCookie.getValue();
                 setAuthentication(accessToken, request);
-            } else {
+            } catch (ExpiredJwtException ae) {
                 final Cookie refreshTokenCookie = cookieUtil.getCookie(request, REFRESH_TOKEN_NAME);
                 if (refreshTokenCookie != null) {
-                    String refreshToken = refreshTokenCookie.getValue();
-                    if (!jwtValidateService.isTokenExpired(refreshToken)
-                            && jwtValidateService.existsRefreshToken(refreshToken)) {
-                        setAuthentication(refreshToken, request);
-                        setNewAccessToken(refreshToken, response);
+                    try {
+                        String refreshToken = refreshTokenCookie.getValue();
+                        if (jwtValidateService.existsRefreshToken(refreshToken)) {
+                            setAuthentication(refreshToken, request);
+                            setNewAccessToken(refreshToken, response);
+                        }
+                    } catch (ExpiredJwtException re) {
+                        // TODO re login
                     }
+                } else {
+                    throw UserNotLoginException.EXCEPTION;
                 }
             }
+        } else {
+            throw UserNotLoginException.EXCEPTION;
         }
         filterChain.doFilter(request, response);
     }
@@ -59,7 +68,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.addCookie(newAccessTokenCookie);
     }
 
-    private void setAuthentication(String token, HttpServletRequest request) {
+    private void setAuthentication(String token, HttpServletRequest request) throws ExpiredJwtException {
         UserDetails userDetails = authDetailsService.loadUserByUsername(jwtValidateService.getEmail(token));
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

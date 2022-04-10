@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.global.security.auth;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +11,7 @@ import java.util.Collections;
 
 
 @RequiredArgsConstructor
+@Getter
 public class AuthDetails implements UserDetails {
 
     private final User user;

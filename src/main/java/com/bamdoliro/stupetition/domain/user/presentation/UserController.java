@@ -6,7 +6,6 @@ import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserRe
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
