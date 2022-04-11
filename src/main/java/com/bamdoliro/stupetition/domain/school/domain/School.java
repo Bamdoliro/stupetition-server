@@ -3,6 +3,7 @@ package com.bamdoliro.stupetition.domain.school.domain;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -17,4 +18,16 @@ public class School extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "school_id")
     private Long id;
+
+    @Column(length = 20)
+    private String name;
+
+    @Column(length = 20)
+    private String emailDomain;
+
+    @Builder
+    public School(String name, String emailDomain) {
+        this.name = name;
+        this.emailDomain = emailDomain;
+    }
 }
