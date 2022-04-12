@@ -1,6 +1,5 @@
 package com.bamdoliro.stupetition.global.security.jwt.filter;
 
-import com.bamdoliro.stupetition.domain.user.exception.UserNotLoginException;
 import com.bamdoliro.stupetition.global.security.auth.AuthDetailsService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
@@ -51,12 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     } catch (ExpiredJwtException re) {
                         // TODO re login
                     }
-                } else {
-                    throw UserNotLoginException.EXCEPTION;
                 }
             }
-        } else {
-            throw UserNotLoginException.EXCEPTION;
         }
         filterChain.doFilter(request, response);
     }
