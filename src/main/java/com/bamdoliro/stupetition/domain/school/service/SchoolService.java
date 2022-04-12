@@ -20,9 +20,7 @@ public class SchoolService {
 
     @Transactional(readOnly = true)
     public List<SchoolResponseDto> searchSchool(String schoolName) {
-        log.info(schoolName);
-        List<School> result = schoolRepository.findAllByNameContaining(schoolName);
-        log.info(result.toString());
+        List<School> result = schoolRepository.findByNameContaining(schoolName);
         return result.stream().map(SchoolResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }

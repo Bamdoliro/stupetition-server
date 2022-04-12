@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface SchoolRepository extends CrudRepository<School, Long> {
 
-    List<School> findAllByNameContaining(String name);
+    List<School> findByNameContaining(String name);
 }
