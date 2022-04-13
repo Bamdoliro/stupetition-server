@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
+import com.bamdoliro.stupetition.domain.school.service.SchoolService;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
@@ -16,7 +17,9 @@ import com.bamdoliro.stupetition.global.security.auth.AuthDetails;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.bamdoliro.stupetition.global.security.jwt.JwtProperties.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,17 +39,17 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     private final CookieUtil cookieUtil;
+    private final SchoolService schoolService;
 
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
         validateCreateUserRequest(dto);
-        User user = userRepository.save(createUserFromCreateUserDto(dto));
+        userRepository.save(createUserFromCreateUserDto(dto));
     }
 
     private User createUserFromCreateUserDto(CreateUserRequestDto dto) {
         return User.builder()
-                // TODO school mapping
-                .school(null)
+                .school(schoolService.getSchool(dto.getSchoolName()))
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .authority(Authority.ROLE_STUDENT)
@@ -85,15 +89,20 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public GetUserResponseDto getUserInformation(Authentication authentication) {
-        AuthDetails auth = (AuthDetails) authentication.getPrincipal();
-        User user = auth.getUser();
+        User user = getCurrentUser();
 
         return GetUserResponseDto.builder()
-                .school(user.getSchool())
+                .schoolName(user.getSchool().getName())
                 .email(user.getEmail())
                 .authority(user.getAuthority())
                 .status(user.getStatus())
                 .build();
+    }
+
+    public User getCurrentUser() {
+        AuthDetails auth = (AuthDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return auth.getUser();
     }
 }

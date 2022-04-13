@@ -10,7 +10,7 @@ import lombok.Getter;
 @Builder
 public class GetUserResponseDto {
 
-    private School school;
+    private String schoolName;
     private String email;
     private Authority authority;
     private Status status;
