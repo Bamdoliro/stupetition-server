@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.school.service;
 
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.school.domain.repository.SchoolRepository;
+import com.bamdoliro.stupetition.domain.school.exception.SchoolNotFoundException;
 import com.bamdoliro.stupetition.domain.school.presentation.dto.response.SchoolResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,4 +26,10 @@ public class SchoolService {
                 .collect(Collectors.toList());
     }
 
+    // School Entity 바로 반환 주의하깅
+    @Transactional(readOnly = true)
+    public School getSchool(String schoolName) {
+        return schoolRepository.findByName(schoolName)
+                .orElseThrow(() -> SchoolNotFoundException.EXCEPTION);
+    }
 }
