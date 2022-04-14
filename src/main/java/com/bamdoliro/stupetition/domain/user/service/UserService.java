@@ -10,6 +10,7 @@ import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsExceptio
 import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.ModifyUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
@@ -90,7 +91,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public GetUserResponseDto getUserInformation(Authentication authentication) {
+    public GetUserResponseDto getUserInformation() {
         User user = getCurrentUser();
 
         return GetUserResponseDto.builder()

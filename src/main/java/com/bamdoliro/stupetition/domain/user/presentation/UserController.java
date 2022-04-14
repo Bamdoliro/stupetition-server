@@ -32,8 +32,8 @@ public class UserController {
         return userService.loginUser(dto, response);
     }
 
-    @GetMapping("/get")
-    public GetUserResponseDto getUser(Authentication authentication) {
-        return userService.getUserInformation(authentication);
+    @GetMapping
+    public GetUserResponseDto getUser() {
+        return userService.getUserInformation();
     }
 }
