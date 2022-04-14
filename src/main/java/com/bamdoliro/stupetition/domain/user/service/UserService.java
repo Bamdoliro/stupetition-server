@@ -8,6 +8,7 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsException;
 import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
@@ -103,7 +104,7 @@ public class UserService {
     public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
         User user = getCurrentUser();
 
-        validateUpdateUserRequest(user, dto.getCurrentPassword());
+        passwordCheck(user, dto.getCurrentPassword());
         user.updateSchool(schoolService.getSchool(dto.getSchoolName()));
     }
 
@@ -111,12 +112,20 @@ public class UserService {
     public void updateUserPassword(UpdateUserPasswordRequestDto dto) {
         User user = getCurrentUser();
 
-        validateUpdateUserRequest(user, dto.getCurrentPassword());
+        passwordCheck(user, dto.getCurrentPassword());
         user.updatePassword(passwordEncoder.encode(dto.getPassword()));
     }
 
-    private void validateUpdateUserRequest(User user, String currentPassword) {
-        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+    @Transactional
+    public void deleteUser(DeleteUserRequestDto dto) {
+        User user = getCurrentUser();
+
+        passwordCheck(user, dto.getPassword());
+        userRepository.delete(user);
+    }
+
+    private void passwordCheck(User user, String passwordToCheck) {
+        if (!passwordEncoder.matches(passwordToCheck, user.getPassword())) {
             throw PasswordMismatchException.EXCEPTION;
         }
     }

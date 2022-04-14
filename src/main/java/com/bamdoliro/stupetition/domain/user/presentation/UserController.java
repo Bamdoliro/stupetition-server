@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.user.presentation;
 
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequestDto;
@@ -46,5 +47,10 @@ public class UserController {
     @PutMapping("/update/password")
     public void updateUserPassword(@RequestBody @Valid UpdateUserPasswordRequestDto dto) {
         userService.updateUserPassword(dto);
+    }
+
+    @DeleteMapping
+    private void deleteUser(@RequestBody @Valid DeleteUserRequestDto dto) {
+        userService.deleteUser(dto);
     }
 }
