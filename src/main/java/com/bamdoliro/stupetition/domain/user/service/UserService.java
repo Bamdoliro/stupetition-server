@@ -8,9 +8,7 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsException;
 import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.ModifyUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
@@ -19,7 +17,6 @@ import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -102,8 +99,31 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
+    public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
+        User user = getCurrentUser();
+
+        validateUpdateUserRequest(user, dto.getCurrentPassword());
+        user.updateSchool(schoolService.getSchool(dto.getSchoolName()));
+    }
+
+    @Transactional
+    public void updateUserPassword(UpdateUserPasswordRequestDto dto) {
+        User user = getCurrentUser();
+
+        validateUpdateUserRequest(user, dto.getCurrentPassword());
+        user.updatePassword(passwordEncoder.encode(dto.getPassword()));
+    }
+
+    private void validateUpdateUserRequest(User user, String currentPassword) {
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw PasswordMismatchException.EXCEPTION;
+        }
+    }
+
     public User getCurrentUser() {
         AuthDetails auth = (AuthDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getUser();
     }
+
 }

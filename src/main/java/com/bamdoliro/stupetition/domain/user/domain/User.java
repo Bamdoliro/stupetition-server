@@ -34,6 +34,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "authority", length = 25, nullable = false)
     private Authority authority;
 
+    @Enumerated(EnumType.STRING)
+    @Column(length = 10, nullable = false)
+    private Status status;
+
     @Builder
     public User(School school, String email, String password, Authority authority, Status status) {
         this.school = school;
@@ -43,7 +47,11 @@ public class User extends BaseTimeEntity {
         this.status = status;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 10, nullable = false)
-    private Status status;
+    public void updateSchool(School school) {
+        this.school = school;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }

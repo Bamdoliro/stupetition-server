@@ -2,11 +2,12 @@ package com.bamdoliro.stupetition.domain.user.presentation;
 
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserSchoolRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -35,5 +36,15 @@ public class UserController {
     @GetMapping
     public GetUserResponseDto getUser() {
         return userService.getUserInformation();
+    }
+
+    @PutMapping("/update/school")
+    public void updateUserSchool(@RequestBody @Valid UpdateUserSchoolRequestDto dto) {
+        userService.updateUserSchool(dto);
+    }
+
+    @PutMapping("/update/password")
+    public void updateUserPassword(@RequestBody @Valid UpdateUserPasswordRequestDto dto) {
+        userService.updateUserPassword(dto);
     }
 }
