@@ -26,4 +26,11 @@ public class CookieUtil {
         return null;
     }
 
+    public Cookie deleteCookie(String cookieName) {
+        Cookie cookieToDelete = new Cookie(cookieName, null);
+        cookieToDelete.setMaxAge(0);
+        cookieToDelete.setPath("/");
+        return cookieToDelete;
+    }
+
 }

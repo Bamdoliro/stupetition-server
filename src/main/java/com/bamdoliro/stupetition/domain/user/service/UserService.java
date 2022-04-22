@@ -8,7 +8,6 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsException;
 import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
@@ -17,7 +16,6 @@ import com.bamdoliro.stupetition.global.security.auth.AuthDetails;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.bamdoliro.stupetition.global.security.jwt.JwtProperties.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -86,6 +83,17 @@ public class UserService {
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw PasswordMismatchException.EXCEPTION;
         }
+    }
+
+    public void logoutUser(HttpServletResponse response) {
+        User user = getCurrentUser();
+
+        Cookie tempCookie1 = cookieUtil.deleteCookie(ACCESS_TOKEN_NAME);
+        Cookie tempCookie2 = cookieUtil.deleteCookie(REFRESH_TOKEN_NAME);
+        response.addCookie(tempCookie1);
+        response.addCookie(tempCookie2);
+
+        redisService.deleteData(user.getEmail());
     }
 
     @Transactional(readOnly = true)
