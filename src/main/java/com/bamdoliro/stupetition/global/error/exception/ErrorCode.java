@@ -14,7 +14,9 @@ public enum ErrorCode {
     PASSWORD_MISMATCH(401, "비밀번호가 틀렸습니다."),
     USER_NOT_LOGIN(401, "로그인 해야 합니다."),
 
-    SCHOOL_NOT_FOUND(404, "학교를 찾을 수 없습니다.")
+    SCHOOL_NOT_FOUND(404, "학교를 찾을 수 없습니다."),
+
+    BOARD_NOT_FOUND(404, "글을 찾을 수 없습니다.")
     ;
 
     private final int status;
