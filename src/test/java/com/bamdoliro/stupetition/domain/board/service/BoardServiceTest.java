@@ -3,7 +3,7 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
-import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatch;
+import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
@@ -170,7 +170,7 @@ class BoardServiceTest {
         given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
 
         // when and then
-        assertThrows(UserAndBoardMismatch.class, () ->
+        assertThrows(UserAndBoardMismatchException.class, () ->
                 boardService.updateBoard(1L, new UpdateBoardRequestDto("newTitle", "newContent")));
         assertNotEquals(defaultBoard.getTitle(), "newTitle");
         assertNotEquals(defaultBoard.getContent(), "newContent");
