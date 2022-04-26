@@ -4,6 +4,7 @@ import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
+import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
@@ -64,9 +65,17 @@ public class BoardService {
 
     @Transactional
     public void updateBoard(Long boardId, UpdateBoardRequestDto dto) {
+        User user = userService.getCurrentUser();
         Board board = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+        validateUpdateBoardRequest(user, board);
 
         board.updateBoard(dto.getTitle(), dto.getContent());
+    }
+
+    private void validateUpdateBoardRequest(User user, Board board) {
+        if (!user.getEmail().equals(board.getUser().getEmail())) {
+            throw UserAndBoardMismatchException.EXCEPTION;
+        }
     }
 }
