@@ -97,4 +97,21 @@ class BoardServiceTest {
         assertEquals(boardResponse.get(1).getTitle(), defaultBoard.getTitle());
     }
 
+    @DisplayName("[Service] 내가 게시한 Board 조회")
+    @Test
+    void givenNothing_whenSearchingUserBoard_thenReturnsUserBoard() {
+        // given
+        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(boardRepository.findBoardsByUser(defaultUser))
+                .willReturn(List.of(defaultBoard, defaultBoard));
+
+        // when
+        List<BoardResponseDto> boardResponse = boardService.getUserBoards();
+
+        // then
+        verify(boardRepository, times(1)).findBoardsByUser(defaultUser);
+        assertEquals(boardResponse.get(0).getNumberOfAgreers(), defaultBoard.getNumberOfAgreers());
+        assertEquals(boardResponse.get(1).getTitle(), defaultBoard.getTitle());
+    }
+
 }
