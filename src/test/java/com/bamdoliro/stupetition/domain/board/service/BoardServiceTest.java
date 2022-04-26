@@ -4,6 +4,7 @@ import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.school.domain.School;
@@ -140,5 +141,19 @@ class BoardServiceTest {
 
         // when and then
         assertThrows(BoardNotFoundException.class, () -> boardService.getBoardDetail(1L));
+    }
+
+    @DisplayName("[Service] Board 수정")
+    @Test
+    void givenBoardIdAndBoardInfo_whenModifyingBoard_thenModifiesBoard() {
+        // given
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when
+        boardService.updateBoard(1L, new UpdateBoardRequestDto("newTitle", "newContent"));
+
+        // then
+        assertEquals(defaultBoard.getTitle(), "newTitle");
+        assertEquals(defaultBoard.getContent(), "newContent");
     }
 }
