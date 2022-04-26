@@ -2,11 +2,12 @@ package com.bamdoliro.stupetition.domain.board.service;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
+import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
+import static com.bamdoliro.stupetition.domain.board.domain.type.Status.*;
+import static com.bamdoliro.stupetition.domain.user.domain.type.Status.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -44,7 +49,7 @@ class BoardServiceTest {
             .email("test@test.com")
             .password("password")
             .authority(Authority.ROLE_STUDENT)
-            .status(Status.ATTENDING)
+            .status(ATTENDING)
             .build();
 
     private final Board defaultBoard = Board.builder()
@@ -73,6 +78,23 @@ class BoardServiceTest {
         assertEquals(defaultSchool, savedBoard.getSchool());
         assertEquals("title", savedBoard.getTitle());
         assertEquals("content", savedBoard.getContent());
+    }
+
+    @DisplayName("[Service] Board 조회 - Status 가 PETITION 인 경우")
+    @Test
+    void givenBoardStatus_whenSearchingPetitionBoardInUserSchool_thenReturnsPetitionBoardInTheSchool() {
+        // given
+        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(boardRepository.findBoardsBySchoolAndStatus(defaultSchool, PETITION))
+                .willReturn(List.of(defaultBoard, defaultBoard));
+
+        // when
+        List<BoardResponseDto> boardResponse = boardService.getBoards(PETITION);
+
+        // then
+        verify(boardRepository, times(1)).findBoardsBySchoolAndStatus(defaultUser.getSchool(), PETITION);
+        assertEquals(boardResponse.get(0).getNumberOfAgreers(), defaultBoard.getNumberOfAgreers());
+        assertEquals(boardResponse.get(1).getTitle(), defaultBoard.getTitle());
     }
 
 }
