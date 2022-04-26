@@ -175,4 +175,35 @@ class BoardServiceTest {
         assertNotEquals(defaultBoard.getTitle(), "newTitle");
         assertNotEquals(defaultBoard.getContent(), "newContent");
     }
+
+    @DisplayName("[Service] Board 삭제")
+    @Test
+    void givenBoardIdAndBoardInfo_whenDeletingBoard_thenDeletesBoard() {
+        // given
+        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when
+        boardService.deleteBoard(1L);
+
+        // then
+        verify(boardRepository, times(1)).deleteById(1L);
+    }
+
+    @DisplayName("[Service] Board 삭제 - 글 작성자 아닌 사람이 접근")
+    @Test
+    void givenBoardIdByInvalidUser_whenDeletingBoard_thenThrowsUserAndBoardUserMismatchException() {
+        // given
+        given(userService.getCurrentUser()).willReturn(
+                User.builder()
+                        .email("invalid@user.com")
+                        .build()
+        );
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when and then
+        assertThrows(UserAndBoardMismatchException.class, () ->
+                boardService.deleteBoard (1L));
+    }
+
 }
