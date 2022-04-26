@@ -3,6 +3,7 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
+import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatch;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
@@ -24,8 +25,7 @@ import java.util.Optional;
 
 import static com.bamdoliro.stupetition.domain.board.domain.type.Status.PETITION;
 import static com.bamdoliro.stupetition.domain.user.domain.type.Status.ATTENDING;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -147,6 +147,7 @@ class BoardServiceTest {
     @Test
     void givenBoardIdAndBoardInfo_whenModifyingBoard_thenModifiesBoard() {
         // given
+        given(userService.getCurrentUser()).willReturn(defaultUser);
         given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
 
         // when
@@ -155,5 +156,23 @@ class BoardServiceTest {
         // then
         assertEquals(defaultBoard.getTitle(), "newTitle");
         assertEquals(defaultBoard.getContent(), "newContent");
+    }
+
+    @DisplayName("[Service] Board 수정 - 글 작성자 아닌 사람이 접근")
+    @Test
+    void givenBoardIdAndBoardInfoByInvalidUser_whenModifyingBoard_thenThrowsUserAndBoardUserMismatchException() {
+        // given
+        given(userService.getCurrentUser()).willReturn(
+                User.builder()
+                        .email("invalid@user.com")
+                        .build()
+        );
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when and then
+        assertThrows(UserAndBoardMismatch.class, () ->
+                boardService.updateBoard(1L, new UpdateBoardRequestDto("newTitle", "newContent")));
+        assertNotEquals(defaultBoard.getTitle(), "newTitle");
+        assertNotEquals(defaultBoard.getContent(), "newContent");
     }
 }
