@@ -10,12 +10,14 @@ import java.time.LocalDateTime;
 @Builder
 public class BoardResponseDto {
 
+    private Long id;
     private String title;
     private int numberOfAgreers;
     private LocalDateTime createdAt;
 
     public static BoardResponseDto of(Board board) {
         return BoardResponseDto.builder()
+                .id(board.getId())
                 .title(board.getTitle())
                 .numberOfAgreers(board.getNumberOfAgreers())
                 .createdAt(board.getCreatedAt())
