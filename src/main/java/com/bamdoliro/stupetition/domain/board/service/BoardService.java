@@ -5,6 +5,7 @@ import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.user.domain.User;
@@ -59,5 +60,13 @@ public class BoardService {
     public BoardDetailResponseDto getBoardDetail(Long id) {
         return BoardDetailResponseDto.of(boardRepository.findBoardById(id)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION));
+    }
+
+    @Transactional
+    public void updateBoard(Long boardId, UpdateBoardRequestDto dto) {
+        Board board = boardRepository.findBoardById(boardId)
+                .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+
+        board.updateBoard(dto.getTitle(), dto.getContent());
     }
 }
