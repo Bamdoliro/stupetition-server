@@ -2,8 +2,9 @@ package com.bamdoliro.stupetition.domain.board.service;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
-import com.bamdoliro.stupetition.domain.board.domain.type.Status;
+import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
@@ -18,10 +19,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.bamdoliro.stupetition.domain.board.domain.type.Status.*;
-import static com.bamdoliro.stupetition.domain.user.domain.type.Status.*;
+import static com.bamdoliro.stupetition.domain.board.domain.type.Status.PETITION;
+import static com.bamdoliro.stupetition.domain.user.domain.type.Status.ATTENDING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -114,4 +117,28 @@ class BoardServiceTest {
         assertEquals(boardResponse.get(1).getTitle(), defaultBoard.getTitle());
     }
 
+    @DisplayName("[Service] Board 상세 조회")
+    @Test
+    void givenBoardId_whenSearchingBoardDetail_thenReturnsBoardDetail() {
+        // given
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when
+        BoardDetailResponseDto boardDetailResponse = boardService.getBoardDetail(1L);
+
+        // then
+        verify(boardRepository, times(1)).findBoardById(1L);
+        assertEquals(boardDetailResponse.getTitle(), defaultBoard.getTitle());
+        assertEquals(boardDetailResponse.getStatus(), defaultBoard.getStatus());
+    }
+
+    @DisplayName("[Service] Board 상세 조회 - invalid BoardId")
+    @Test
+    void givenInvalidBoardId_whenSearchingBoardDetail_thenThrowsBoardIsNotFoundException() {
+        // given
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.empty());
+
+        // when and then
+        assertThrows(BoardNotFoundException.class, () -> boardService.getBoardDetail(1L));
+    }
 }
