@@ -26,4 +26,9 @@ public class BoardController {
     public List<BoardResponseDto> getBoards(@RequestParam Status status) {
         return boardService.getBoards(status);
     }
+
+    @GetMapping("/my")
+    public List<BoardResponseDto> getUserBoards() {
+        return boardService.getUserBoards();
+    }
 }

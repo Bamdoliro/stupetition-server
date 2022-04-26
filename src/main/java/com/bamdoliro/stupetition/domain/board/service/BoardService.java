@@ -37,11 +37,19 @@ public class BoardService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<BoardResponseDto> getBoards(Status status) {
         User user = userService.getCurrentUser();
 
         return boardRepository.findBoardsBySchoolAndStatus(user.getSchool(), status)
+                .stream().map(BoardResponseDto::of).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardResponseDto> getUserBoards() {
+        User user = userService.getCurrentUser();
+
+        return boardRepository.findBoardsByUser(user)
                 .stream().map(BoardResponseDto::of).collect(Collectors.toList());
     }
 }
