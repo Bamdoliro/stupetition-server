@@ -3,7 +3,6 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
-import com.bamdoliro.stupetition.domain.school.service.SchoolService;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
