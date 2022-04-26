@@ -59,26 +59,28 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public BoardDetailResponseDto getBoardDetail(Long id) {
-        return BoardDetailResponseDto.of(boardRepository.findBoardById(id)
-                .orElseThrow(() -> BoardNotFoundException.EXCEPTION));
+        return BoardDetailResponseDto.of(getBoard(id));
     }
 
     @Transactional
-    public void updateBoard(Long boardId, UpdateBoardRequestDto dto) {
+    public void updateBoard(Long id, UpdateBoardRequestDto dto) {
         User user = userService.getCurrentUser();
-        Board board = boardRepository.findBoardById(boardId)
-                .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+        Board board = getBoard(id);
         validateUserAndBoard(user, board);
 
         board.updateBoard(dto.getTitle(), dto.getContent());
     }
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long id) {
         User user = userService.getCurrentUser();
-        Board board = boardRepository.findBoardById(boardId)
-                        .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+        Board board = getBoard(id);
         validateUserAndBoard(user, board);
 
-        boardRepository.deleteById(boardId);
+        boardRepository.deleteById(id);
+    }
+
+    private Board getBoard(Long id) {
+        return boardRepository.findBoardById(id)
+                .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
     }
 
     private void validateUserAndBoard(User user, Board board) {

@@ -34,21 +34,21 @@ public class BoardController {
         return boardService.getUserBoards();
     }
 
-    @GetMapping("/{boardId}")
-    public BoardDetailResponseDto getBoardDetail(@PathVariable Long boardId) {
-        return boardService.getBoardDetail(boardId);
+    @GetMapping("/{id}")
+    public BoardDetailResponseDto getBoardDetail(@PathVariable Long id) {
+        return boardService.getBoardDetail(id);
     }
 
-    @PutMapping("/{boardId}")
+    @PutMapping("/{id}")
     public void updateBoard(
-            @PathVariable Long boardId,
+            @PathVariable Long id,
             @RequestBody @Valid UpdateBoardRequestDto dto
     ) {
-        boardService.updateBoard(boardId, dto);
+        boardService.updateBoard(id, dto);
     }
 
-    @DeleteMapping("/{boardId}")
-    public void deleteBoard(@PathVariable Long boardId) {
-        boardService.deleteBoard(boardId);
+    @DeleteMapping("/{id}")
+    public void deleteBoard(@PathVariable Long id) {
+        boardService.deleteBoard(id);
     }
 }
