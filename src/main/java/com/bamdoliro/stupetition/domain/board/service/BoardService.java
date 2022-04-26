@@ -68,14 +68,24 @@ public class BoardService {
         User user = userService.getCurrentUser();
         Board board = boardRepository.findBoardById(boardId)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
-        validateUpdateBoardRequest(user, board);
+        validateUserAndBoard(user, board);
 
         board.updateBoard(dto.getTitle(), dto.getContent());
     }
+    public void deleteBoard(Long boardId) {
+        User user = userService.getCurrentUser();
+        Board board = boardRepository.findBoardById(boardId)
+                        .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
+        validateUserAndBoard(user, board);
 
-    private void validateUpdateBoardRequest(User user, Board board) {
+        boardRepository.deleteById(boardId);
+    }
+
+    private void validateUserAndBoard(User user, Board board) {
         if (!user.getEmail().equals(board.getUser().getEmail())) {
             throw UserAndBoardMismatchException.EXCEPTION;
         }
     }
+
+
 }
