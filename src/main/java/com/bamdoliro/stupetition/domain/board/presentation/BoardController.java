@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.board.presentation;
 
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,10 @@ public class BoardController {
     @GetMapping("/my")
     public List<BoardResponseDto> getUserBoards() {
         return boardService.getUserBoards();
+    }
+
+    @GetMapping("/{boardId}")
+    public BoardDetailResponseDto getBoardDetail(@PathVariable Long boardId) {
+        return boardService.getBoardDetail(boardId);
     }
 }

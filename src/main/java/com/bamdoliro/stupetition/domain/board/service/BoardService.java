@@ -3,7 +3,9 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
+import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
+import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
@@ -51,5 +53,11 @@ public class BoardService {
 
         return boardRepository.findBoardsByUser(user)
                 .stream().map(BoardResponseDto::of).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public BoardDetailResponseDto getBoardDetail(Long id) {
+        return BoardDetailResponseDto.of(boardRepository.findBoardById(id)
+                .orElseThrow(() -> BoardNotFoundException.EXCEPTION));
     }
 }
