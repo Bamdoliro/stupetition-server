@@ -16,7 +16,8 @@ public enum ErrorCode {
 
     SCHOOL_NOT_FOUND(404, "학교를 찾을 수 없습니다."),
 
-    BOARD_NOT_FOUND(404, "글을 찾을 수 없습니다.")
+    BOARD_NOT_FOUND(404, "글을 찾을 수 없습니다."),
+    USER_AND_BOARD_MISMATCH(403, "글의 작성자가 아닙니다.")
     ;
 
     private final int status;
