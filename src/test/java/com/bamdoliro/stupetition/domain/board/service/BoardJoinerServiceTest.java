@@ -3,6 +3,8 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.BoardJoiner;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardJoinerRepository;
+import com.bamdoliro.stupetition.domain.board.exception.SameBoardWriterAndAgreerException;
+import com.bamdoliro.stupetition.domain.board.exception.UserAlreadyJoinException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.JoinBoardRequestDto;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -75,6 +78,7 @@ class BoardJoinerServiceTest {
         given(boardJoinerRepository.save(any()))
                 .willReturn(makeBoardJoiner(agreer));
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
+        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(agreer, defaultBoard)).willReturn(false);
         ArgumentCaptor<BoardJoiner> captor = ArgumentCaptor.forClass(BoardJoiner.class);
 
         // when
@@ -100,6 +104,7 @@ class BoardJoinerServiceTest {
         given(userService.getCurrentUser()).willReturn(studentCouncil);
         given(boardJoinerRepository.save(any())).willReturn(boardJoiner);
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
+        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(studentCouncil, defaultBoard)).willReturn(false);
         ArgumentCaptor<BoardJoiner> captor = ArgumentCaptor.forClass(BoardJoiner.class);
 
         // when
@@ -112,6 +117,38 @@ class BoardJoinerServiceTest {
         assertEquals(defaultBoard, savedBoardJoiner.getBoard());
         assertEquals("content", savedBoardJoiner.getComment());
         assertEquals(true, savedBoardJoiner.getIsStudentCouncil());
+    }
+
+    @DisplayName("[Service] Board 에 comment - 이미 한 경우")
+    @Test
+    void givenAgreeBoardRequestDto_whenCommentingToBoard_thenThrowsUserAlreadyJoinBoardException() {
+        // given
+        User studentCouncil = makeUser(Authority.ROLE_STUDENT_COUNCIL);
+        BoardJoiner boardJoiner = makeBoardJoiner(studentCouncil);
+
+        given(userService.getCurrentUser()).willReturn(studentCouncil);
+        given(boardService.getBoard(1L)).willReturn(defaultBoard);
+        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(studentCouncil, defaultBoard)).willReturn(true);
+
+        // when and then
+        assertThrows(UserAlreadyJoinException.class,
+                () -> boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content")));
+    }
+
+    @DisplayName("[Service] Board 에 comment - 작성자와 동의자가 같은 경우")
+    @Test
+    void givenAgreeBoardRequestDto_whenAgreeingToBoard_thenThrowsSameBoardWriterAndAgreerException() {
+        // given
+        User student = defaultBoard.getUser();
+        BoardJoiner boardJoiner = makeBoardJoiner(student);
+
+        given(userService.getCurrentUser()).willReturn(student);
+        given(boardService.getBoard(1L)).willReturn(defaultBoard);
+        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(student, defaultBoard)).willReturn(false);
+
+        // when and then
+        assertThrows(SameBoardWriterAndAgreerException.class,
+                () -> boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content")));
     }
 
 }
