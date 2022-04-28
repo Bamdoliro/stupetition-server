@@ -35,10 +35,11 @@ public class BoardJoiner extends BaseTimeEntity {
     private Boolean isStudentCouncil;
 
     @Builder
-    public BoardJoiner(User user, Board board, String comment) {
+    public BoardJoiner(User user, Board board, String comment, Boolean isStudentCouncil) {
         this.user = user;
         this.board = board;
         this.comment = comment;
+        this.isStudentCouncil = isStudentCouncil;
     }
 
     public void updateComment(String comment) {

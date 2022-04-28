@@ -78,7 +78,7 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
 
-    private Board getBoard(Long id) {
+    public Board getBoard(Long id) {
         return boardRepository.findBoardById(id)
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
     }
