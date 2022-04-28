@@ -65,6 +65,10 @@ public class Board extends BaseTimeEntity {
         this.content = content;
     }
 
+    public void updateStatus(Status status) {
+        this.status = status;
+    }
+
     public void addAgreer() {
         numberOfAgreers++;
     }

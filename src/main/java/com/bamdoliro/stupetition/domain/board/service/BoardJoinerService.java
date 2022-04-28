@@ -39,6 +39,7 @@ public class BoardJoinerService {
 
     private void joinCommenterBoard(User user, Board board, JoinBoardRequestDto dto) {
         validateCommenterBoard(user, board);
+        board.updateStatus(Status.ANSWERED);
 
         boardCommenterRepository.save(createComment(user, board, dto));
 
