@@ -22,34 +22,22 @@ public class BoardJoinerService {
     @Transactional
     public void joinBoard(JoinBoardRequestDto dto) {
         User user = userService.getCurrentUser();
+        Board board = boardService.getBoard(dto.getBoardId());
 
-        boardJoinerRepository.save(
-                user.getAuthority() == Authority.ROLE_STUDENT_COUNCIL?
-                        commentBoard(user, dto):agreeBoard(user, dto)
-        );
+        boardJoinerRepository.save(createBoardByAuthority(user, board, dto));
     }
 
-    private BoardJoiner commentBoard(User user, JoinBoardRequestDto dto) {
+    private BoardJoiner createBoardByAuthority(User user, Board board, JoinBoardRequestDto dto) {
+        if (user.getAuthority() == Authority.ROLE_STUDENT) {
+            board.addAgreer();
+        }
+
         return BoardJoiner.builder()
                 .user(user)
-                .board(boardService.getBoard(dto.getBoardId()))
+                .board(board)
                 .comment(dto.getComment())
-                .isStudentCouncil(true)
+                .isStudentCouncil(user.getAuthority() == Authority.ROLE_STUDENT_COUNCIL)
                 .build();
     }
 
-    private BoardJoiner agreeBoard(User user, JoinBoardRequestDto dto) {
-        return BoardJoiner.builder()
-                .user(user)
-                .board(getBoardAndAddNumberOfBoardAgreer(dto.getBoardId()))
-                .comment(dto.getComment())
-                .isStudentCouncil(false)
-                .build();
-    }
-
-    private Board getBoardAndAddNumberOfBoardAgreer(Long id) {
-        Board board = boardService.getBoard(id);
-        board.addAgreer();
-        return board;
-    }
 }
