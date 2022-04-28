@@ -2,15 +2,19 @@ package com.bamdoliro.stupetition.domain.board.domain;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Getter
 @MappedSuperclass
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BoardJoiner extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "board_joiner_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
