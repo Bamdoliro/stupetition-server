@@ -1,22 +1,41 @@
 package com.bamdoliro.stupetition.domain.board.domain;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "board_commenter_table")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
-@NoArgsConstructor
-public class BoardCommenter extends BoardJoiner {
+public class BoardCommenter extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board;
+
+    @Column(length = 4000, nullable = false)
+    private String comment;
 
     @Builder
     public BoardCommenter(User user, Board board, String comment) {
-        super(user, board, comment);
+        this.user = user;
+        this.board = board;
+        this.comment = comment;
     }
 
+    public void updateComment(String comment) {
+        this.comment = comment;
+    }
 }
