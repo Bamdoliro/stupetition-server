@@ -30,9 +30,6 @@ public class Board extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "board")
-    private List<BoardJoiner> agreer = new ArrayList<>();
-
     @Column(length = 20, nullable = false)
     private String title;
 
@@ -45,6 +42,13 @@ public class Board extends BaseTimeEntity {
 
     @Column
     private int numberOfAgreers;
+
+    @OneToMany(mappedBy = "board")
+    private List<BoardAgreer> agreer = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board")
+    private BoardCommenter commenter;
 
     @Builder
     public Board(School school, User user, String title, String content) {
