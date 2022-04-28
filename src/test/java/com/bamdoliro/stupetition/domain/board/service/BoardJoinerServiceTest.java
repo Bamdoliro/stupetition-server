@@ -1,8 +1,11 @@
 package com.bamdoliro.stupetition.domain.board.service;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
-import com.bamdoliro.stupetition.domain.board.domain.BoardJoiner;
-import com.bamdoliro.stupetition.domain.board.domain.repository.BoardJoinerRepository;
+import com.bamdoliro.stupetition.domain.board.domain.BoardAgreer;
+import com.bamdoliro.stupetition.domain.board.domain.BoardCommenter;
+import com.bamdoliro.stupetition.domain.board.domain.repository.BoardAgreerRepository;
+import com.bamdoliro.stupetition.domain.board.domain.repository.BoardCommenterRepository;
+import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.exception.SameBoardWriterAndAgreerException;
 import com.bamdoliro.stupetition.domain.board.exception.UserAlreadyJoinException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.JoinBoardRequestDto;
@@ -32,7 +35,10 @@ class BoardJoinerServiceTest {
     private BoardJoinerService boardJoinerService;
 
     @Mock
-    private BoardJoinerRepository boardJoinerRepository;
+    private BoardAgreerRepository boardAgreerRepository;
+
+    @Mock
+    private BoardCommenterRepository boardCommenterRepository;
 
     @Mock
     private UserService userService;
@@ -60,37 +66,46 @@ class BoardJoinerServiceTest {
                 .build();
     }
 
-    private BoardJoiner makeBoardJoiner(User user) {
-        return BoardJoiner.builder()
+    private BoardAgreer makeBoardAgreer(User user) {
+        return BoardAgreer.builder()
                 .user(user)
                 .board(defaultBoard)
                 .comment("comment")
-                .isStudentCouncil(user.getAuthority() == Authority.ROLE_STUDENT_COUNCIL)
                 .build();
     }
 
-    @DisplayName("[Service] User Board 에 동의")
+    private BoardCommenter makeBoardCommenter(User user) {
+        return BoardCommenter.builder()
+                .user(user)
+                .board(defaultBoard)
+                .comment("comment")
+                .build();
+    }
+
+    @DisplayName("[Service] Board 에 동의")
     @Test
     void givenAgreeBoardRequestDto_whenAgreeingToBoard_thenCreateBoardJoiner() {
         // given
-        User agreer = makeUser(Authority.ROLE_STUDENT);
-        given(userService.getCurrentUser()).willReturn(agreer);
-        given(boardJoinerRepository.save(any()))
-                .willReturn(makeBoardJoiner(agreer));
+        User student = makeUser(Authority.ROLE_STUDENT);
+        BoardAgreer agreer = makeBoardAgreer(student);
+        ArgumentCaptor<BoardAgreer> captor = ArgumentCaptor.forClass(BoardAgreer.class);
+
+        given(userService.getCurrentUser()).willReturn(student);
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(agreer, defaultBoard)).willReturn(false);
-        ArgumentCaptor<BoardJoiner> captor = ArgumentCaptor.forClass(BoardJoiner.class);
+        given(boardAgreerRepository.existsBoardAgreerByUserAndBoard(student, defaultBoard)).willReturn(false);
+        given(boardAgreerRepository.save(any())).willReturn(agreer);
 
         // when
         boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content"));
 
         // then
-        verify(boardJoinerRepository, times(1)).save(captor.capture());
-        BoardJoiner savedBoardJoiner = captor.getValue();
-        assertEquals(agreer, savedBoardJoiner.getUser());
-        assertEquals(defaultBoard, savedBoardJoiner.getBoard());
-        assertEquals("content", savedBoardJoiner.getComment());
-        assertEquals(false, savedBoardJoiner.getIsStudentCouncil());
+        verify(boardAgreerRepository, times(1))
+                .existsBoardAgreerByUserAndBoard(student, defaultBoard);
+        verify(boardAgreerRepository, times(1)).save(captor.capture());
+        BoardAgreer savedBoardAgreer = captor.getValue();
+        assertEquals(student, savedBoardAgreer.getUser());
+        assertEquals(defaultBoard, savedBoardAgreer.getBoard());
+        assertEquals("content", savedBoardAgreer.getComment());
         assertEquals(defaultBoard.getNumberOfAgreers(), 1);
     }
 
@@ -99,24 +114,24 @@ class BoardJoinerServiceTest {
     void givenAgreeBoardRequestDto_whenCommentingToBoard_thenCreateBoardJoiner() {
         // given
         User studentCouncil = makeUser(Authority.ROLE_STUDENT_COUNCIL);
-        BoardJoiner boardJoiner = makeBoardJoiner(studentCouncil);
+        BoardCommenter boardCommenter = makeBoardCommenter(studentCouncil);
+        ArgumentCaptor<BoardCommenter> captor = ArgumentCaptor.forClass(BoardCommenter.class);
 
         given(userService.getCurrentUser()).willReturn(studentCouncil);
-        given(boardJoinerRepository.save(any())).willReturn(boardJoiner);
+        given(boardCommenterRepository.save(any())).willReturn(boardCommenter);
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(studentCouncil, defaultBoard)).willReturn(false);
-        ArgumentCaptor<BoardJoiner> captor = ArgumentCaptor.forClass(BoardJoiner.class);
+        given(boardCommenterRepository.existsBoardCommenterByUserAndBoard(studentCouncil, defaultBoard)).willReturn(false);
 
         // when
         boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content"));
 
         // then
-        verify(boardJoinerRepository, times(1)).save(captor.capture());
-        BoardJoiner savedBoardJoiner = captor.getValue();
-        assertEquals(studentCouncil, savedBoardJoiner.getUser());
-        assertEquals(defaultBoard, savedBoardJoiner.getBoard());
-        assertEquals("content", savedBoardJoiner.getComment());
-        assertEquals(true, savedBoardJoiner.getIsStudentCouncil());
+        verify(boardCommenterRepository, times(1)).save(captor.capture());
+        BoardCommenter savedBoardCommenter = captor.getValue();
+        assertEquals(studentCouncil, savedBoardCommenter.getUser());
+        assertEquals(defaultBoard, savedBoardCommenter.getBoard());
+        assertEquals("content", savedBoardCommenter.getComment());
+        assertEquals(defaultBoard.getStatus(), Status.ANSWERED);
     }
 
     @DisplayName("[Service] Board 에 comment - 이미 한 경우")
@@ -124,11 +139,10 @@ class BoardJoinerServiceTest {
     void givenAgreeBoardRequestDto_whenCommentingToBoard_thenThrowsUserAlreadyJoinBoardException() {
         // given
         User studentCouncil = makeUser(Authority.ROLE_STUDENT_COUNCIL);
-        BoardJoiner boardJoiner = makeBoardJoiner(studentCouncil);
 
         given(userService.getCurrentUser()).willReturn(studentCouncil);
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(studentCouncil, defaultBoard)).willReturn(true);
+        given(boardCommenterRepository.existsBoardCommenterByUserAndBoard(studentCouncil, defaultBoard)).willReturn(true);
 
         // when and then
         assertThrows(UserAlreadyJoinException.class,
@@ -140,11 +154,10 @@ class BoardJoinerServiceTest {
     void givenAgreeBoardRequestDto_whenAgreeingToBoard_thenThrowsSameBoardWriterAndAgreerException() {
         // given
         User student = defaultBoard.getUser();
-        BoardJoiner boardJoiner = makeBoardJoiner(student);
 
         given(userService.getCurrentUser()).willReturn(student);
         given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardJoinerRepository.existsBoardJoinerByUserAndBoard(student, defaultBoard)).willReturn(false);
+        given(boardAgreerRepository.existsBoardAgreerByUserAndBoard(student, defaultBoard)).willReturn(false);
 
         // when and then
         assertThrows(SameBoardWriterAndAgreerException.class,
