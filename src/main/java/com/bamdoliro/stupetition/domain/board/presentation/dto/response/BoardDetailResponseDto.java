@@ -1,7 +1,6 @@
 package com.bamdoliro.stupetition.domain.board.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
-import com.bamdoliro.stupetition.domain.board.domain.BoardCommenter;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,12 +24,6 @@ public class BoardDetailResponseDto {
     private String studentCouncilComment;
 
     public static BoardDetailResponseDto of(Board board) {
-        BoardCommenter commenter = board.getCommenter();
-        String comment = null;
-        if (commenter != null) {
-            comment = commenter.getComment();
-        }
-
         return BoardDetailResponseDto.builder()
                 .id(board.getId())
                 .userEmail(board.getUser().getEmail())
@@ -41,7 +34,7 @@ public class BoardDetailResponseDto {
                 .agreerComments(board.getAgreer().stream()
                         .map(AgreerCommentsResponseDto::of)
                         .collect(Collectors.toList()))
-                .studentCouncilComment(comment)
+                .studentCouncilComment(board.getStatus() == Status.ANSWERED ? board.getCommenter().getComment() : null)
                 .build();
     }
 }
