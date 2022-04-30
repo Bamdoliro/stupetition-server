@@ -19,7 +19,10 @@ public enum ErrorCode {
     BOARD_NOT_FOUND(404, "글을 찾을 수 없습니다."),
     USER_AND_BOARD_MISMATCH(403, "글의 작성자가 아닙니다."),
     USER_ALREADY_JOIN(422, "이미 해당 글에 흔적을 남겼습니다."),
-    SAME_BOARD_WRITER_AND_AGREER(422, "본인의 글에 동의할 수 없습니다.");
+    SAME_BOARD_WRITER_AND_AGREER(422, "본인의 글에 동의할 수 없습니다."),
+    NOT_WAITING_BOARD(409, "Waiting 상태의 글에만 답변할 수 있습니다.")
+    ;
+
 
     private final int status;
     private final String message;
