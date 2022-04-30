@@ -2,7 +2,9 @@ package com.bamdoliro.stupetition.domain.board.service;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
+import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
+import com.bamdoliro.stupetition.domain.board.exception.NotWaitingBoardException;
 import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
@@ -204,6 +206,30 @@ class BoardServiceTest {
         // when and then
         assertThrows(UserAndBoardMismatchException.class, () ->
                 boardService.deleteBoard (1L));
+    }
+
+    @DisplayName("[Service] Board REVIEWING 상태로 변경")
+    @Test
+    void givenBoardId_whenUpdatingBoardStatusReviewing_thenUpdateBoardStatusReviewing() {
+        // given
+        defaultBoard.updateStatus(Status.WAITING);
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when
+        boardService.reviewBoard(1L);
+
+        //then
+        assertEquals(Status.REVIEWING, defaultBoard.getStatus());
+    }
+
+    @DisplayName("[Service] Board REVIEWING 상태로 변경 - not WAITING board")
+    @Test
+    void givenInvalidBoardId_whenUpdatingBoardStatusReviewing_thenUpdateBoardStatusReviewing() {
+        // given
+        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+
+        // when and then
+        assertThrows(NotWaitingBoardException.class, () -> boardService.reviewBoard(1L));
     }
 
 }
