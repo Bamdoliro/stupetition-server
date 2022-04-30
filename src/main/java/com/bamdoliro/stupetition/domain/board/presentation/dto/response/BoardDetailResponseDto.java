@@ -4,12 +4,10 @@ import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Getter
 @Builder
 public class BoardDetailResponseDto {

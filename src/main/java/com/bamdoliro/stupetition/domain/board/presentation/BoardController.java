@@ -51,4 +51,9 @@ public class BoardController {
     public void deleteBoard(@PathVariable Long id) {
         boardService.deleteBoard(id);
     }
+
+    @PutMapping("/{id}/reviewing")
+    public void reviewBoard(@PathVariable Long id) {
+        boardService.reviewBoard(id);
+    }
 }

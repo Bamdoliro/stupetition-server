@@ -56,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/join", "/user/login", "/school/search").permitAll()
+                .antMatchers("/board/{id}/reviewing").hasRole("STUDENT_COUNCIL")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().disable();

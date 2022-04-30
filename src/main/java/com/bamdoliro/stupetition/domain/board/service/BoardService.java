@@ -4,6 +4,7 @@ import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
 import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
+import com.bamdoliro.stupetition.domain.board.exception.NotWaitingBoardException;
 import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
@@ -70,6 +71,8 @@ public class BoardService {
 
         board.updateBoard(dto.getTitle(), dto.getContent());
     }
+
+    @Transactional
     public void deleteBoard(Long id) {
         User user = userService.getCurrentUser();
         Board board = getBoard(id);
@@ -77,6 +80,21 @@ public class BoardService {
 
         boardRepository.deleteById(id);
     }
+
+    @Transactional
+    public void reviewBoard(Long id) {
+        Board board = getBoard(id);
+        validationReviewedBoard(board);
+
+        board.updateStatus(Status.REVIEWING);
+    }
+
+    private void validationReviewedBoard(Board board) {
+        if (board.getStatus() != Status.WAITING) {
+            throw NotWaitingBoardException.EXCEPTION;
+        }
+    }
+
 
     public Board getBoard(Long id) {
         return boardRepository.findBoardById(id)
@@ -88,6 +106,5 @@ public class BoardService {
             throw UserAndBoardMismatchException.EXCEPTION;
         }
     }
-
 
 }
