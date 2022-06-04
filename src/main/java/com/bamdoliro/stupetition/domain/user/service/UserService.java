@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
+import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
@@ -35,10 +36,11 @@ public class UserService {
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
         userFacade.checkUser(dto.getEmail());
-        userRepository.save(dto.toEntity(
-                schoolFacade.findSchoolById(dto.getSchoolId()),
-                passwordEncoder.encode(dto.getPassword())
-        ));
+
+        School school = schoolFacade.findSchoolById(dto.getSchoolId());
+        school.addMember();
+
+        userRepository.save(dto.toEntity(school, passwordEncoder.encode(dto.getPassword())));
     }
 
 
@@ -83,7 +85,11 @@ public class UserService {
         User user = userFacade.getCurrentUser();
         userFacade.checkPassword(user.getPassword(), passwordEncoder.encode(dto.getCurrentPassword()));
 
-        user.updateSchool(schoolFacade.findSchoolById(dto.getSchoolId()));
+        user.getSchool().subtractMember();
+        School updateSchool = schoolFacade.findSchoolById(dto.getSchoolId());
+        updateSchool.addMember();
+
+        user.updateSchool(updateSchool);
     }
 
     @Transactional
@@ -98,6 +104,8 @@ public class UserService {
     public void deleteUser(DeleteUserRequestDto dto) {
         User user = userFacade.getCurrentUser();
         userFacade.checkPassword(user.getPassword(), dto.getPassword());
+
+        user.getSchool().subtractMember();
 
         userRepository.delete(user);
     }
