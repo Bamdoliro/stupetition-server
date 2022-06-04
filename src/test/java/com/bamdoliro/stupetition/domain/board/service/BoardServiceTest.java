@@ -2,10 +2,7 @@ package com.bamdoliro.stupetition.domain.board.service;
 
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
-import com.bamdoliro.stupetition.domain.board.domain.type.Status;
-import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
-import com.bamdoliro.stupetition.domain.board.exception.NotWaitingBoardException;
-import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
+import com.bamdoliro.stupetition.domain.board.facade.BoardFacade;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
@@ -13,7 +10,7 @@ import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardRes
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.service.UserService;
+import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,13 +20,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.bamdoliro.stupetition.domain.board.domain.type.Status.PETITION;
 import static com.bamdoliro.stupetition.domain.user.domain.type.Status.ATTENDING;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -39,11 +36,9 @@ class BoardServiceTest {
     @InjectMocks
     private BoardService boardService;
 
-    @Mock
-    private BoardRepository boardRepository;
-
-    @Mock
-    private UserService userService;
+    @Mock private BoardRepository boardRepository;
+    @Mock private UserFacade userFacade;
+    @Mock private BoardFacade boardFacade;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -70,7 +65,7 @@ class BoardServiceTest {
     @Test
     void givenCreateBoardRequestDto_whenCreatingBoard_thenCreatesBoard() {
         // given
-        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(boardRepository.save(any())).willReturn(defaultBoard);
         ArgumentCaptor<Board> captor = ArgumentCaptor.forClass(Board.class);
 
@@ -90,7 +85,7 @@ class BoardServiceTest {
     @Test
     void givenBoardStatus_whenSearchingPetitionBoardInUserSchool_thenReturnsPetitionBoardInTheSchool() {
         // given
-        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(boardRepository.findBoardsBySchoolAndStatus(defaultSchool, PETITION))
                 .willReturn(List.of(defaultBoard, defaultBoard));
 
@@ -107,7 +102,7 @@ class BoardServiceTest {
     @Test
     void givenNothing_whenSearchingUserBoard_thenReturnsUserBoard() {
         // given
-        given(userService.getCurrentUser()).willReturn(defaultUser);
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(boardRepository.findBoardsByUser(defaultUser))
                 .willReturn(List.of(defaultBoard, defaultBoard));
 
@@ -124,112 +119,48 @@ class BoardServiceTest {
     @Test
     void givenBoardId_whenSearchingBoardDetail_thenReturnsBoardDetail() {
         // given
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+        given(boardFacade.findBoardById(1L)).willReturn(defaultBoard);
 
         // when
-        BoardDetailResponseDto boardDetailResponse = boardService.getBoardDetail(1L);
+        BoardDetailResponseDto response = boardService.getBoardDetail(1L);
 
         // then
-        verify(boardRepository, times(1)).findBoardById(1L);
-        assertEquals(boardDetailResponse.getTitle(), defaultBoard.getTitle());
-        assertEquals(boardDetailResponse.getStatus(), defaultBoard.getStatus());
-    }
-
-    @DisplayName("[Service] Board 상세 조회 - invalid BoardId")
-    @Test
-    void givenInvalidBoardId_whenSearchingBoardDetail_thenThrowsBoardIsNotFoundException() {
-        // given
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.empty());
-
-        // when and then
-        assertThrows(BoardNotFoundException.class, () -> boardService.getBoardDetail(1L));
+        verify(boardFacade, times(1)).findBoardById(1L);
+        assertEquals(response.getTitle(), defaultBoard.getTitle());
+        assertEquals(response.getContent(), defaultBoard.getContent());
+        assertEquals(response.getStatus(), defaultBoard.getStatus());
     }
 
     @DisplayName("[Service] Board 수정")
     @Test
     void givenBoardIdAndBoardInfo_whenModifyingBoard_thenModifiesBoard() {
         // given
-        given(userService.getCurrentUser()).willReturn(defaultUser);
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
+        given(boardFacade.findBoardById(1L)).willReturn(defaultBoard);
+        willDoNothing().given(boardFacade).checkWriter(defaultUser, defaultBoard);
 
         // when
         boardService.updateBoard(1L, new UpdateBoardRequestDto("newTitle", "newContent"));
 
         // then
+        verify(boardFacade, times(1)).checkWriter(defaultUser, defaultBoard);
         assertEquals(defaultBoard.getTitle(), "newTitle");
         assertEquals(defaultBoard.getContent(), "newContent");
-    }
-
-    @DisplayName("[Service] Board 수정 - 글 작성자 아닌 사람이 접근")
-    @Test
-    void givenBoardIdAndBoardInfoByInvalidUser_whenModifyingBoard_thenThrowsUserAndBoardUserMismatchException() {
-        // given
-        given(userService.getCurrentUser()).willReturn(
-                User.builder()
-                        .email("invalid@user.com")
-                        .build()
-        );
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
-
-        // when and then
-        assertThrows(UserAndBoardMismatchException.class, () ->
-                boardService.updateBoard(1L, new UpdateBoardRequestDto("newTitle", "newContent")));
-        assertNotEquals(defaultBoard.getTitle(), "newTitle");
-        assertNotEquals(defaultBoard.getContent(), "newContent");
     }
 
     @DisplayName("[Service] Board 삭제")
     @Test
     void givenBoardIdAndBoardInfo_whenDeletingBoard_thenDeletesBoard() {
         // given
-        given(userService.getCurrentUser()).willReturn(defaultUser);
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
+        given(boardFacade.findBoardById(1L)).willReturn(defaultBoard);
+        willDoNothing().given(boardFacade).checkWriter(defaultUser, defaultBoard);
 
         // when
         boardService.deleteBoard(1L);
 
         // then
+        verify(boardFacade, times(1)).checkWriter(defaultUser, defaultBoard);
         verify(boardRepository, times(1)).deleteById(1L);
     }
-
-    @DisplayName("[Service] Board 삭제 - 글 작성자 아닌 사람이 접근")
-    @Test
-    void givenBoardIdByInvalidUser_whenDeletingBoard_thenThrowsUserAndBoardUserMismatchException() {
-        // given
-        given(userService.getCurrentUser()).willReturn(
-                User.builder()
-                        .email("invalid@user.com")
-                        .build()
-        );
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
-
-        // when and then
-        assertThrows(UserAndBoardMismatchException.class, () ->
-                boardService.deleteBoard (1L));
-    }
-
-    @DisplayName("[Service] Board REVIEWING 상태로 변경")
-    @Test
-    void givenBoardId_whenUpdatingBoardStatusReviewing_thenUpdateBoardStatusReviewing() {
-        // given
-        defaultBoard.updateStatus(Status.WAITING);
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
-
-        // when
-        boardService.reviewBoard(1L);
-
-        //then
-        assertEquals(Status.REVIEWING, defaultBoard.getStatus());
-    }
-
-    @DisplayName("[Service] Board REVIEWING 상태로 변경 - not WAITING board")
-    @Test
-    void givenInvalidBoardId_whenUpdatingBoardStatusReviewing_thenUpdateBoardStatusReviewing() {
-        // given
-        given(boardRepository.findBoardById(1L)).willReturn(Optional.of(defaultBoard));
-
-        // when and then
-        assertThrows(NotWaitingBoardException.class, () -> boardService.reviewBoard(1L));
-    }
-
 }

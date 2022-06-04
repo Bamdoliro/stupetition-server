@@ -6,13 +6,14 @@ import com.bamdoliro.stupetition.domain.board.domain.BoardCommenter;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardAgreerRepository;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardCommenterRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
-import com.bamdoliro.stupetition.domain.board.exception.SameBoardWriterAndAgreerException;
-import com.bamdoliro.stupetition.domain.board.exception.UserAlreadyJoinException;
+import com.bamdoliro.stupetition.domain.board.facade.BoardAgreerFacade;
+import com.bamdoliro.stupetition.domain.board.facade.BoardCommenterFacade;
+import com.bamdoliro.stupetition.domain.board.facade.BoardFacade;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.JoinBoardRequestDto;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.service.UserService;
+import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +23,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -34,17 +35,12 @@ class BoardJoinerServiceTest {
     @InjectMocks
     private BoardJoinerService boardJoinerService;
 
-    @Mock
-    private BoardAgreerRepository boardAgreerRepository;
-
-    @Mock
-    private BoardCommenterRepository boardCommenterRepository;
-
-    @Mock
-    private UserService userService;
-
-    @Mock
-    private BoardService boardService;
+    @Mock private BoardAgreerRepository boardAgreerRepository;
+    @Mock private BoardCommenterRepository boardCommenterRepository;
+    @Mock private UserFacade userFacade;
+    @Mock private BoardFacade boardFacade;
+    @Mock private BoardAgreerFacade boardAgreerFacade;
+    @Mock private BoardCommenterFacade boardCommenterFacade;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -90,17 +86,17 @@ class BoardJoinerServiceTest {
         BoardAgreer agreer = makeBoardAgreer(student);
         ArgumentCaptor<BoardAgreer> captor = ArgumentCaptor.forClass(BoardAgreer.class);
 
-        given(userService.getCurrentUser()).willReturn(student);
-        given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardAgreerRepository.existsBoardAgreerByUserAndBoard(student, defaultBoard)).willReturn(false);
+        given(userFacade.getCurrentUser()).willReturn(student);
+        given(boardFacade.findBoardById(1L)).willReturn(defaultBoard);
+        willDoNothing().given(boardAgreerFacade).checkAgreerBoard(student, defaultBoard);
         given(boardAgreerRepository.save(any())).willReturn(agreer);
 
         // when
         boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content"));
 
         // then
-        verify(boardAgreerRepository, times(1))
-                .existsBoardAgreerByUserAndBoard(student, defaultBoard);
+        verify(boardAgreerFacade, times(1))
+                .checkAgreerBoard(student, defaultBoard);
         verify(boardAgreerRepository, times(1)).save(captor.capture());
         BoardAgreer savedBoardAgreer = captor.getValue();
         assertEquals(student, savedBoardAgreer.getUser());
@@ -117,15 +113,17 @@ class BoardJoinerServiceTest {
         BoardCommenter boardCommenter = makeBoardCommenter(studentCouncil);
         ArgumentCaptor<BoardCommenter> captor = ArgumentCaptor.forClass(BoardCommenter.class);
 
-        given(userService.getCurrentUser()).willReturn(studentCouncil);
+        given(userFacade.getCurrentUser()).willReturn(studentCouncil);
         given(boardCommenterRepository.save(any())).willReturn(boardCommenter);
-        given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardCommenterRepository.existsBoardCommenterByUserAndBoard(studentCouncil, defaultBoard)).willReturn(false);
+        given(boardFacade.findBoardById(1L)).willReturn(defaultBoard);
+        willDoNothing().given(boardCommenterFacade).checkCommenterBoard(studentCouncil, defaultBoard);
+
 
         // when
         boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content"));
 
         // then
+        verify(boardCommenterFacade, times(1)).checkCommenterBoard(studentCouncil, defaultBoard);
         verify(boardCommenterRepository, times(1)).save(captor.capture());
         BoardCommenter savedBoardCommenter = captor.getValue();
         assertEquals(studentCouncil, savedBoardCommenter.getUser());
@@ -133,35 +131,4 @@ class BoardJoinerServiceTest {
         assertEquals("content", savedBoardCommenter.getComment());
         assertEquals(defaultBoard.getStatus(), Status.ANSWERED);
     }
-
-    @DisplayName("[Service] Board 에 comment - 이미 한 경우")
-    @Test
-    void givenAgreeBoardRequestDto_whenCommentingToBoard_thenThrowsUserAlreadyJoinBoardException() {
-        // given
-        User studentCouncil = makeUser(Authority.ROLE_STUDENT_COUNCIL);
-
-        given(userService.getCurrentUser()).willReturn(studentCouncil);
-        given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardCommenterRepository.existsBoardCommenterByUserAndBoard(studentCouncil, defaultBoard)).willReturn(true);
-
-        // when and then
-        assertThrows(UserAlreadyJoinException.class,
-                () -> boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content")));
-    }
-
-    @DisplayName("[Service] Board 에 comment - 작성자와 동의자가 같은 경우")
-    @Test
-    void givenAgreeBoardRequestDto_whenAgreeingToBoard_thenThrowsSameBoardWriterAndAgreerException() {
-        // given
-        User student = defaultBoard.getUser();
-
-        given(userService.getCurrentUser()).willReturn(student);
-        given(boardService.getBoard(1L)).willReturn(defaultBoard);
-        given(boardAgreerRepository.existsBoardAgreerByUserAndBoard(student, defaultBoard)).willReturn(false);
-
-        // when and then
-        assertThrows(SameBoardWriterAndAgreerException.class,
-                () -> boardJoinerService.joinBoard(new JoinBoardRequestDto(1L, "content")));
-    }
-
 }
