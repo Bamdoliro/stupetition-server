@@ -3,15 +3,13 @@ package com.bamdoliro.stupetition.domain.board.service;
 import com.bamdoliro.stupetition.domain.board.domain.Board;
 import com.bamdoliro.stupetition.domain.board.domain.repository.BoardRepository;
 import com.bamdoliro.stupetition.domain.board.domain.type.Status;
-import com.bamdoliro.stupetition.domain.board.exception.BoardNotFoundException;
-import com.bamdoliro.stupetition.domain.board.exception.NotWaitingBoardException;
-import com.bamdoliro.stupetition.domain.board.exception.UserAndBoardMismatchException;
+import com.bamdoliro.stupetition.domain.board.facade.BoardFacade;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.CreateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.request.UpdateBoardRequestDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardDetailResponseDto;
 import com.bamdoliro.stupetition.domain.board.presentation.dto.response.BoardResponseDto;
 import com.bamdoliro.stupetition.domain.user.domain.User;
-import com.bamdoliro.stupetition.domain.user.service.UserService;
+import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,27 +22,19 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final UserService userService;
+    private final UserFacade userFacade;
+    private final BoardFacade boardFacade;
 
     @Transactional
     public void createBoard(CreateBoardRequestDto dto) {
-        User user = userService.getCurrentUser();
+        User user = userFacade.getCurrentUser();
 
-        boardRepository.save(createBoardFromCreateBoardDtoAndUser(user, dto));
-    }
-
-    private Board createBoardFromCreateBoardDtoAndUser(User user, CreateBoardRequestDto dto) {
-        return Board.builder()
-                .school(user.getSchool())
-                .user(user)
-                .title(dto.getTitle())
-                .content(dto.getContent())
-                .build();
+        boardRepository.save(dto.toEntity(user));
     }
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getBoards(Status status) {
-        User user = userService.getCurrentUser();
+        User user = userFacade.getCurrentUser();
 
         return boardRepository.findBoardsBySchoolAndStatus(user.getSchool(), status)
                 .stream().map(BoardResponseDto::of).collect(Collectors.toList());
@@ -52,7 +42,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<BoardResponseDto> getUserBoards() {
-        User user = userService.getCurrentUser();
+        User user = userFacade.getCurrentUser();
 
         return boardRepository.findBoardsByUser(user)
                 .stream().map(BoardResponseDto::of).collect(Collectors.toList());
@@ -60,51 +50,28 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public BoardDetailResponseDto getBoardDetail(Long id) {
-        return BoardDetailResponseDto.of(getBoard(id));
+        return BoardDetailResponseDto.of(boardFacade.findBoardById(id));
     }
 
     @Transactional
     public void updateBoard(Long id, UpdateBoardRequestDto dto) {
-        User user = userService.getCurrentUser();
-        Board board = getBoard(id);
-        validateUserAndBoard(user, board);
+        Board board = boardFacade.findBoardById(id);
+        boardFacade.checkWriter(
+                userFacade.getCurrentUser(),
+                board
+        );
 
         board.updateBoard(dto.getTitle(), dto.getContent());
     }
 
     @Transactional
     public void deleteBoard(Long id) {
-        User user = userService.getCurrentUser();
-        Board board = getBoard(id);
-        validateUserAndBoard(user, board);
+        boardFacade.checkWriter(
+                userFacade.getCurrentUser(),
+                boardFacade.findBoardById(id)
+        );
 
         boardRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void reviewBoard(Long id) {
-        Board board = getBoard(id);
-        validationReviewedBoard(board);
-
-        board.updateStatus(Status.REVIEWING);
-    }
-
-    private void validationReviewedBoard(Board board) {
-        if (board.getStatus() != Status.WAITING) {
-            throw NotWaitingBoardException.EXCEPTION;
-        }
-    }
-
-
-    public Board getBoard(Long id) {
-        return boardRepository.findBoardById(id)
-                .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
-    }
-
-    private void validateUserAndBoard(User user, Board board) {
-        if (!user.getEmail().equals(board.getUser().getEmail())) {
-            throw UserAndBoardMismatchException.EXCEPTION;
-        }
     }
 
 }
