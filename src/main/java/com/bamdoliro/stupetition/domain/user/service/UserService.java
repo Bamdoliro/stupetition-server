@@ -1,22 +1,16 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
-import com.bamdoliro.stupetition.domain.school.service.SchoolService;
+import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
-import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.domain.type.Status;
-import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
-import com.bamdoliro.stupetition.domain.user.exception.UserAlreadyExistsException;
-import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
+import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
-import com.bamdoliro.stupetition.global.security.auth.AuthDetails;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,31 +29,22 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     private final CookieUtil cookieUtil;
-    private final SchoolService schoolService;
+    private final SchoolFacade schoolFacade;
+    private final UserFacade userFacade;
 
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
-        validateCreateUserRequest(dto);
-        userRepository.save(createUserFromCreateUserDto(dto));
+        userFacade.checkUser(dto.getEmail());
+        userRepository.save(dto.toEntity(
+                schoolFacade.findSchoolByName(dto.getSchoolName()),
+                passwordEncoder.encode(dto.getPassword())
+        ));
     }
 
-    private User createUserFromCreateUserDto(CreateUserRequestDto dto) {
-        return User.builder()
-                .school(schoolService.getSchool(dto.getSchoolName()))
-                .email(dto.getEmail())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .authority(Authority.ROLE_STUDENT)
-                .status(Status.ATTENDING)
-                .build();
-    }
-
-    private void validateCreateUserRequest(CreateUserRequestDto dto) {
-        userRepository.findByEmail(dto.getEmail())
-                .ifPresent(user -> { throw UserAlreadyExistsException.EXCEPTION; });
-    }
 
     public TokenResponseDto loginUser(LoginUserRequestDto dto, HttpServletResponse response) {
-        validateLoginUserRequest(dto);
+        User user = userFacade.findUserByEmail(dto.getEmail());
+        userFacade.checkPassword(user.getPassword(), passwordEncoder.encode(dto.getPassword()));
 
         final String accessToken = jwtTokenProvider.createAccessToken(dto.getEmail());
         final String refreshToken = jwtTokenProvider.createRefreshToken(dto.getEmail());
@@ -76,17 +61,8 @@ public class UserService {
                 .build();
     }
 
-    private void validateLoginUserRequest(LoginUserRequestDto dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
-                .orElseThrow(() -> UserNotFoundException.EXCEPTION);
-
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw PasswordMismatchException.EXCEPTION;
-        }
-    }
-
     public void logoutUser(HttpServletResponse response) {
-        User user = getCurrentUser();
+        User user = userFacade.getCurrentUser();
 
         Cookie tempCookie1 = cookieUtil.deleteCookie(ACCESS_TOKEN_NAME);
         Cookie tempCookie2 = cookieUtil.deleteCookie(REFRESH_TOKEN_NAME);
@@ -98,49 +74,31 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public GetUserResponseDto getUserInformation() {
-        User user = getCurrentUser();
-
-        return GetUserResponseDto.builder()
-                .schoolName(user.getSchool().getName())
-                .email(user.getEmail())
-                .authority(user.getAuthority())
-                .status(user.getStatus())
-                .build();
+        User user = userFacade.getCurrentUser();
+        return GetUserResponseDto.of(user);
     }
 
     @Transactional
     public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
-        User user = getCurrentUser();
+        User user = userFacade.getCurrentUser();
+        userFacade.checkPassword(user.getPassword(), passwordEncoder.encode(dto.getCurrentPassword()));
 
-        passwordCheck(user, dto.getCurrentPassword());
-        user.updateSchool(schoolService.getSchool(dto.getSchoolName()));
+        user.updateSchool(schoolFacade.findSchoolByName(dto.getSchoolName()));
     }
 
     @Transactional
     public void updateUserPassword(UpdateUserPasswordRequestDto dto) {
-        User user = getCurrentUser();
+        User user = userFacade.getCurrentUser();
+        userFacade.checkPassword(user.getPassword(), passwordEncoder.encode(dto.getCurrentPassword()));
 
-        passwordCheck(user, dto.getCurrentPassword());
         user.updatePassword(passwordEncoder.encode(dto.getPassword()));
     }
 
     @Transactional
     public void deleteUser(DeleteUserRequestDto dto) {
-        User user = getCurrentUser();
+        User user = userFacade.getCurrentUser();
+        userFacade.checkPassword(user.getPassword(), dto.getPassword());
 
-        passwordCheck(user, dto.getPassword());
         userRepository.delete(user);
     }
-
-    private void passwordCheck(User user, String passwordToCheck) {
-        if (!passwordEncoder.matches(passwordToCheck, user.getPassword())) {
-            throw PasswordMismatchException.EXCEPTION;
-        }
-    }
-
-    public User getCurrentUser() {
-        AuthDetails auth = (AuthDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return auth.getUser();
-    }
-
 }
