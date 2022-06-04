@@ -3,11 +3,11 @@ package com.bamdoliro.stupetition.domain.board.exception;
 import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
 import com.bamdoliro.stupetition.global.error.exception.StupetitionException;
 
-public class UserAndBoardMismatchException extends StupetitionException {
+public class UserIsNotWriterException extends StupetitionException {
 
-    public final static UserAndBoardMismatchException EXCEPTION = new UserAndBoardMismatchException();
+    public final static UserIsNotWriterException EXCEPTION = new UserIsNotWriterException();
 
-    private UserAndBoardMismatchException() {
-        super(ErrorCode.USER_AND_BOARD_MISMATCH);
+    private UserIsNotWriterException() {
+        super(ErrorCode.USER_IS_NOT_WRITER);
     }
 }
