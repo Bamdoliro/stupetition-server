@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 public class UpdateUserSchoolRequestDto {
 
     @NotNull(message = "학교를 지정해 주세요.")
-    private String schoolName;
+    private Long schoolId;
 
     @NotNull(message = "현재 비밀번호를 입력해 주세요.")
     private String currentPassword;

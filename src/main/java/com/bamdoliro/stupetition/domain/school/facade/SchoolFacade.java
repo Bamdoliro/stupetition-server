@@ -12,8 +12,8 @@ public class SchoolFacade {
 
     private final SchoolRepository schoolRepository;
 
-    public School findSchoolByName(String name) {
-        return schoolRepository.findByName(name)
+    public School findSchoolById(Long id) {
+        return schoolRepository.findById(id)
                 .orElseThrow(() -> SchoolNotFoundException.EXCEPTION);
     }
 }

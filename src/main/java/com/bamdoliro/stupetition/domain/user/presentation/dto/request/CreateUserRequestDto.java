@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 public class CreateUserRequestDto {
 
     @NotNull(message = "학교를 지정해 주세요.")
-    private final String schoolName;
+    private final Long schoolId;
 
     @NotNull(message = "이메일을 입력해 주세요.")
     @Email

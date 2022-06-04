@@ -36,7 +36,7 @@ public class UserService {
     public void createUser(CreateUserRequestDto dto) {
         userFacade.checkUser(dto.getEmail());
         userRepository.save(dto.toEntity(
-                schoolFacade.findSchoolByName(dto.getSchoolName()),
+                schoolFacade.findSchoolById(dto.getSchoolId()),
                 passwordEncoder.encode(dto.getPassword())
         ));
     }
@@ -83,7 +83,7 @@ public class UserService {
         User user = userFacade.getCurrentUser();
         userFacade.checkPassword(user.getPassword(), passwordEncoder.encode(dto.getCurrentPassword()));
 
-        user.updateSchool(schoolFacade.findSchoolByName(dto.getSchoolName()));
+        user.updateSchool(schoolFacade.findSchoolById(dto.getSchoolId()));
     }
 
     @Transactional

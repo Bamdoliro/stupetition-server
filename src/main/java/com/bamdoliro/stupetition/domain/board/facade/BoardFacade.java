@@ -24,7 +24,7 @@ public class BoardFacade {
                 .orElseThrow(() -> BoardNotFoundException.EXCEPTION);
     }
 
-    public void checkStatue(Status expectedStatus, Status actualStatue) {
+    public void checkStatus(Status expectedStatus, Status actualStatue) {
         if (expectedStatus != actualStatue) {
             throw StatusMismatchException.EXCEPTION;
         }

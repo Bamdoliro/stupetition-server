@@ -8,11 +8,13 @@ import lombok.Getter;
 @Builder
 public class SchoolResponseDto {
 
+    private Long id;
     private String name;
     private String emailDomain;
 
     public static SchoolResponseDto fromEntity(School school) {
         return SchoolResponseDto.builder()
+                .id(school.getId())
                 .name(school.getName())
                 .emailDomain(school.getEmailDomain())
                 .build();
