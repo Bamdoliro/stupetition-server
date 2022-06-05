@@ -29,7 +29,7 @@ public class School extends BaseTimeEntity {
     @Column
     private int numberOfMembers;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "school")
     private List<User> membersOfSchool = new ArrayList<>();
 
     @Builder
