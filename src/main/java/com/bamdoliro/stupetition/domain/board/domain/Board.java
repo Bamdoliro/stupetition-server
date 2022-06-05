@@ -23,11 +23,11 @@ public class Board extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id")
+    @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(length = 20, nullable = false)
@@ -40,14 +40,14 @@ public class Board extends BaseTimeEntity {
     @Column(length = 9, nullable = false)
     private Status status;
 
-    @Column
+    @Column(nullable = false)
     private int numberOfAgreers;
 
     @OneToMany(mappedBy = "board")
     private List<BoardAgreer> agreer = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board")
+    @JoinColumn(name = "board", nullable = true)
     private BoardCommenter commenter;
 
     @Builder
