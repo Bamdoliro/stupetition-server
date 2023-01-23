@@ -26,4 +26,11 @@ public class AuthController {
     public void logoutUser() {
         authService.logoutUser();
     }
+
+    @PutMapping
+    public TokenResponseDto refreshToken(
+            @RequestHeader(value = "Refresh-Token") String refreshToken
+    ) {
+        return authService.refreshToken(refreshToken);
+    }
 }

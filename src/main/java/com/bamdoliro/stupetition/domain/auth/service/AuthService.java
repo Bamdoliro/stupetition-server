@@ -6,6 +6,7 @@ import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserR
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
+import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
     private final UserFacade userFacade;
+    private final JwtValidateService jwtValidateService;
 
     public TokenResponseDto loginUser(LoginUserRequestDto dto) {
         User user = userFacade.findUserByEmail(dto.getEmail());
@@ -38,5 +40,12 @@ public class AuthService {
     public void logoutUser() {
         User user = userFacade.getCurrentUser();
         redisService.deleteData(user.getEmail());
+    }
+
+    public TokenResponseDto refreshToken(String refreshToken) {
+        return TokenResponseDto.builder()
+                .accessToken(jwtTokenProvider.createAccessToken(
+                        userFacade.findUserByEmail(jwtValidateService.getEmail(refreshToken))))
+                .build();
     }
 }
