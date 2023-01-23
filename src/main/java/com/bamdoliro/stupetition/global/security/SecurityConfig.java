@@ -1,10 +1,11 @@
 package com.bamdoliro.stupetition.global.security;
 
+import com.bamdoliro.stupetition.global.error.filter.GlobalErrorFilter;
 import com.bamdoliro.stupetition.global.security.auth.AuthDetailsService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
 import com.bamdoliro.stupetition.global.security.jwt.filter.JwtAuthenticationFilter;
-import com.bamdoliro.stupetition.global.utils.CookieUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthDetailsService authDetailsService;
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtValidateService jwtValidateService;
-    private final CookieUtil cookieUtil;
+    private final ObjectMapper mapper;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) {
         web
                 .ignoring()
-                .mvcMatchers("/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**", "/v2/api-docs","/webjars/**", "/webjars/springfox-swagger-ui/*.{js,css}");
+                .mvcMatchers("/swagger-ui.html/**", "/configuration/**", "/swagger-resources/**", "/v2/api-docs", "/webjars/**", "/webjars/springfox-swagger-ui/*.{js,css}");
     }
 
     @Override
@@ -66,8 +67,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilterBefore(new JwtAuthenticationFilter(
-                                authDetailsService, jwtTokenProvider, jwtValidateService, cookieUtil),
-                        UsernamePasswordAuthenticationFilter.class);
+                                authDetailsService, jwtTokenProvider, jwtValidateService),
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new GlobalErrorFilter(mapper), JwtAuthenticationFilter.class);
 
 
     }
