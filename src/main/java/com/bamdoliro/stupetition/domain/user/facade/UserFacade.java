@@ -33,11 +33,4 @@ public class UserFacade {
         userRepository.findByEmail(email)
                 .ifPresent(user -> { throw UserAlreadyExistsException.EXCEPTION; });
     }
-
-    public void checkPassword(String expectedPassword, String actualPassword) {
-        if (!passwordEncoder.matches(expectedPassword, actualPassword)) {
-            throw PasswordMismatchException.EXCEPTION;
-        }
-    }
-
 }

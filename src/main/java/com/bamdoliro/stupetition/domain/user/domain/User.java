@@ -3,6 +3,7 @@ package com.bamdoliro.stupetition.domain.user.domain;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.domain.type.Status;
+import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -53,5 +54,11 @@ public class User extends BaseTimeEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
+
+    public void checkPassword(String password) {
+        if (!this.password.equals(password)) {
+            throw PasswordMismatchException.EXCEPTION;
+        }
     }
 }
