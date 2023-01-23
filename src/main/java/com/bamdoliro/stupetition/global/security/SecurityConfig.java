@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -58,7 +59,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/user/join", "/user/login", "/school/search").permitAll()
+                .antMatchers(HttpMethod.POST, "/user", "/auth").permitAll()
+                .antMatchers(HttpMethod.PUT, "/auth").permitAll()
+                .antMatchers("/school/search").permitAll()
                 .antMatchers("/board/{id}/reviewing").hasRole("STUDENT_COUNCIL")
                 .anyRequest().authenticated()
                 .and()
