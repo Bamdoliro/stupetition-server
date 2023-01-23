@@ -1,11 +1,13 @@
 package com.bamdoliro.stupetition.global.error;
 
 import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class ErrorResponse {
 
     private final int status;
