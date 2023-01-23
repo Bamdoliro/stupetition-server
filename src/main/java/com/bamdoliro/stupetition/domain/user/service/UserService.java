@@ -46,7 +46,7 @@ public class UserService {
 
     public TokenResponseDto loginUser(LoginUserRequestDto dto, HttpServletResponse response) {
         User user = userFacade.findUserByEmail(dto.getEmail());
-        user.checkPassword(passwordEncoder.encode(dto.getPassword()));
+        user.checkPassword(dto.getPassword(), passwordEncoder);
 
         final String accessToken = jwtTokenProvider.createAccessToken(dto.getEmail());
         final String refreshToken = jwtTokenProvider.createRefreshToken(dto.getEmail());
@@ -83,7 +83,7 @@ public class UserService {
     @Transactional
     public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(passwordEncoder.encode(dto.getCurrentPassword()));
+        user.checkPassword(dto.getCurrentPassword(), passwordEncoder);
 
         user.getSchool().subtractMember();
         School updateSchool = schoolFacade.findSchoolById(dto.getSchoolId());
@@ -95,7 +95,7 @@ public class UserService {
     @Transactional
     public void updateUserPassword(UpdateUserPasswordRequestDto dto) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(passwordEncoder.encode(dto.getCurrentPassword()));
+        user.checkPassword(dto.getCurrentPassword(), passwordEncoder);
 
         user.updatePassword(passwordEncoder.encode(dto.getPassword()));
     }
@@ -103,7 +103,7 @@ public class UserService {
     @Transactional
     public void deleteUser(DeleteUserRequestDto dto) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(dto.getPassword());
+        user.checkPassword(dto.getPassword(), passwordEncoder);
 
         user.getSchool().subtractMember();
 

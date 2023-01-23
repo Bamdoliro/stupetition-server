@@ -6,6 +6,7 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
@@ -56,8 +57,8 @@ public class User extends BaseTimeEntity {
         this.password = password;
     }
 
-    public void checkPassword(String password) {
-        if (!this.password.equals(password)) {
+    public void checkPassword(String password, PasswordEncoder passwordEncoder) {
+        if (!passwordEncoder.matches(password, this.password)) {
             throw PasswordMismatchException.EXCEPTION;
         }
     }

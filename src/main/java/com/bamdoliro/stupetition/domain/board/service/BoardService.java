@@ -36,6 +36,7 @@ public class BoardService {
     public List<BoardResponseDto> getBoards(Status status) {
         User user = userFacade.getCurrentUser();
 
+
         return boardRepository.findBoardsBySchoolAndStatus(user.getSchool(), status)
                 .stream().map(BoardResponseDto::of).collect(Collectors.toList());
     }
