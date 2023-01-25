@@ -3,8 +3,11 @@ package com.bamdoliro.stupetition.global.error.filter;
 import com.bamdoliro.stupetition.global.error.ErrorResponse;
 import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
 import com.bamdoliro.stupetition.global.error.exception.StupetitionException;
+import com.bamdoliro.stupetition.global.security.jwt.exception.ExpiredTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,6 +28,9 @@ public class GlobalErrorFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws IOException {
         try {
             filterChain.doFilter(request, response);
+        } catch (ExpiredTokenException e) {
+            setErrorResponse(e.getErrorCode(), response);
+            response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
         } catch (StupetitionException e) {
             setErrorResponse(e.getErrorCode(), response);
         } catch (Exception e) {
