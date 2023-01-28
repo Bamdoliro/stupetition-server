@@ -62,6 +62,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             throw ExpiredTokenException.EXCEPTION;
         } catch (Exception e) {
+            e.printStackTrace();
             throw InvalidTokenException.EXCEPTION;
         }
     }

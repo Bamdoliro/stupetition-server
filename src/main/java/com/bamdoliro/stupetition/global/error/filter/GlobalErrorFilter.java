@@ -5,7 +5,6 @@ import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
 import com.bamdoliro.stupetition.global.error.exception.StupetitionException;
 import com.bamdoliro.stupetition.global.security.jwt.exception.ExpiredTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
