@@ -6,7 +6,7 @@ import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,9 +32,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public GetUserResponseDto getUserInformation() {
+    public UserResponseDto getUserInformation() {
         User user = userFacade.getCurrentUser();
-        return GetUserResponseDto.of(user);
+        return UserResponseDto.of(user);
     }
 
     @Transactional

@@ -4,7 +4,7 @@ import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUser
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserSchoolRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GetUserResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping
-    public GetUserResponseDto getUser() {
+    public UserResponseDto getUser() {
         return userService.getUserInformation();
     }
 

@@ -3,7 +3,8 @@ package com.bamdoliro.stupetition.domain.auth.service;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.TokenResponseDto;
+import com.bamdoliro.stupetition.domain.auth.presentation.dto.response.TokenResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
 import com.bamdoliro.stupetition.global.redis.RedisService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
@@ -34,6 +35,7 @@ public class AuthService {
         return TokenResponseDto.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .user(UserResponseDto.of(user))
                 .build();
     }
 

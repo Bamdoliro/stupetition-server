@@ -8,15 +8,15 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class GetUserResponseDto {
+public class UserResponseDto {
 
     private String schoolName;
     private String email;
     private Authority authority;
     private Status status;
 
-    public static GetUserResponseDto of(User user) {
-        return GetUserResponseDto.builder()
+    public static UserResponseDto of(User user) {
+        return UserResponseDto.builder()
                 .schoolName(user.getSchool().getName())
                 .email(user.getEmail())
                 .authority(user.getAuthority())
