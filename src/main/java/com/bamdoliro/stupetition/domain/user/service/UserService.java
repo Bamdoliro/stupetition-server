@@ -24,11 +24,7 @@ public class UserService {
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
         userFacade.checkUser(dto.getEmail());
-
-        School school = schoolFacade.findSchoolById(dto.getSchoolId());
-        school.addMember();
-
-        userRepository.save(dto.toEntity(school, passwordEncoder.encode(dto.getPassword())));
+        userRepository.save(dto.toEntity(passwordEncoder.encode(dto.getPassword())));
     }
 
     @Transactional(readOnly = true)
@@ -40,9 +36,7 @@ public class UserService {
     @Transactional
     public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(dto.getCurrentPassword(), passwordEncoder);
 
-        user.getSchool().subtractMember();
         School updateSchool = schoolFacade.findSchoolById(dto.getSchoolId());
         updateSchool.addMember();
 
