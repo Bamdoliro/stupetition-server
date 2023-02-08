@@ -38,8 +38,6 @@ public class UserService {
         User user = userFacade.getCurrentUser();
 
         School updateSchool = schoolFacade.findSchoolById(dto.getSchoolId());
-        updateSchool.addMember();
-
         user.updateSchool(updateSchool);
     }
 
@@ -55,8 +53,6 @@ public class UserService {
     public void deleteUser(DeleteUserRequestDto dto) {
         User user = userFacade.getCurrentUser();
         user.checkPassword(dto.getPassword(), passwordEncoder);
-
-        user.getSchool().subtractMember();
 
         userRepository.delete(user);
     }

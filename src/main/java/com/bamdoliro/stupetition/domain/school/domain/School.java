@@ -26,9 +26,6 @@ public class School extends BaseTimeEntity {
     @Column(length = 20, nullable = true)
     private String emailDomain;
 
-    @Column(nullable = false)
-    private int numberOfMembers;
-
     @OneToMany(mappedBy = "school")
     private List<User> membersOfSchool = new ArrayList<>();
 
@@ -36,13 +33,5 @@ public class School extends BaseTimeEntity {
     public School(String name, String emailDomain) {
         this.name = name;
         this.emailDomain = emailDomain;
-    }
-
-    public void addMember() {
-        numberOfMembers++;
-    }
-
-    public void subtractMember() {
-        numberOfMembers--;
     }
 }
