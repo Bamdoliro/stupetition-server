@@ -1,11 +1,12 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
-import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.*;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequestDto;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,27 +19,21 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final SchoolFacade schoolFacade;
     private final UserFacade userFacade;
+    private final SchoolFacade schoolFacade;
 
     @Transactional
     public void createUser(CreateUserRequestDto dto) {
         userFacade.checkUser(dto.getEmail());
-        userRepository.save(dto.toEntity(passwordEncoder.encode(dto.getPassword())));
+        userRepository.save(dto.toEntity(
+                passwordEncoder.encode(dto.getPassword()),
+                schoolFacade.findSchoolById(dto.getSchoolId())));
     }
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInformation() {
         User user = userFacade.getCurrentUser();
         return UserResponseDto.of(user);
-    }
-
-    @Transactional
-    public void updateUserSchool(UpdateUserSchoolRequestDto dto) {
-        User user = userFacade.getCurrentUser();
-
-        School updateSchool = schoolFacade.findSchoolById(dto.getSchoolId());
-        user.updateSchool(updateSchool);
     }
 
     @Transactional

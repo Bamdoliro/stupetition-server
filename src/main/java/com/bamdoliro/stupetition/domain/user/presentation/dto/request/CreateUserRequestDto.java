@@ -6,6 +6,7 @@ import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -17,16 +18,20 @@ public class CreateUserRequestDto {
 
     @NotNull(message = "이메일을 입력해 주세요.")
     @Email
-    private final String email;
+    private String email;
 
     @NotNull(message = "비밀번호를 입력해 주세요.")
-    @Size(min = 8, max = 20)
-    private final String password;
+    @Length(min = 8, max = 20)
+    private String password;
 
-    public User toEntity(String password) {
+    @NotNull(message = "학교를 선택해 주세요.")
+    private Long schoolId;
+
+    public User toEntity(String password, School school) {
         return User.builder()
                 .email(email)
                 .password(password)
+                .school(school)
                 .authority(Authority.ROLE_STUDENT)
                 .status(Status.ATTENDING)
                 .build();
