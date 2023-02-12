@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface ApproverRepository extends CrudRepository<Approver, Long> {
 
     Boolean existsByUserAndPetition(User user, Petition petition);
+    int countByPetition(Petition petition);
 }

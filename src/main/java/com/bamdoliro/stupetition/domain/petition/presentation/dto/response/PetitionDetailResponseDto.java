@@ -19,11 +19,12 @@ public class PetitionDetailResponseDto {
     private String content;
     private Status status;
     private Boolean approved;
+    private int numberOfApprover;
     private LocalDateTime createdAt;
     private List<CommentResponseDto> comments;
     private String answer;
 
-    public static PetitionDetailResponseDto of(Petition petition, Boolean approved) {
+    public static PetitionDetailResponseDto of(Petition petition, Boolean approved, int numberOfApprover) {
         return PetitionDetailResponseDto.builder()
                 .id(petition.getId())
                 .userEmail(petition.getUser().getEmail())
@@ -31,6 +32,7 @@ public class PetitionDetailResponseDto {
                 .content(petition.getContent())
                 .status(petition.getStatus())
                 .approved(approved)
+                .numberOfApprover(numberOfApprover)
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
                         .map(CommentResponseDto::of)

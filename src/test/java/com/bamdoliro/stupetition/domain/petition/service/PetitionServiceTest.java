@@ -122,6 +122,7 @@ class PetitionServiceTest {
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
         given(approverRepository.existsByUserAndPetition(defaultUser, defaultPetition)).willReturn(false);
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
 
         // when
         PetitionDetailResponseDto response = petitionService.getPetitionDetail(1L);
@@ -132,6 +133,7 @@ class PetitionServiceTest {
         assertEquals(response.getContent(), defaultPetition.getContent());
         assertEquals(response.getStatus(), defaultPetition.getStatus());
         assertEquals(response.getApproved(), false);
+        assertEquals(response.getNumberOfApprover(), 1);
     }
 
     @DisplayName("[Service] Petition 수정")
