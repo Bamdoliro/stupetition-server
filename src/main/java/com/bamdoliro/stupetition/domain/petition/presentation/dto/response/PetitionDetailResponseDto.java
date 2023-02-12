@@ -18,22 +18,24 @@ public class PetitionDetailResponseDto {
     private String title;
     private String content;
     private Status status;
+    private Boolean approved;
     private LocalDateTime createdAt;
     private List<CommentResponseDto> comments;
-    private String studentCouncilComment;
+    private String answer;
 
-    public static PetitionDetailResponseDto of(Petition petition) {
+    public static PetitionDetailResponseDto of(Petition petition, Boolean approved) {
         return PetitionDetailResponseDto.builder()
                 .id(petition.getId())
                 .userEmail(petition.getUser().getEmail())
                 .title(petition.getTitle())
                 .content(petition.getContent())
                 .status(petition.getStatus())
+                .approved(approved)
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
                         .map(CommentResponseDto::of)
                         .collect(Collectors.toList()))
-                .studentCouncilComment(petition.getStatus() == Status.ANSWERED ? petition.getAnswer().getComment() : null)
+                .answer(petition.getStatus() == Status.ANSWERED ? petition.getAnswer().getComment() : null)
                 .build();
     }
 }

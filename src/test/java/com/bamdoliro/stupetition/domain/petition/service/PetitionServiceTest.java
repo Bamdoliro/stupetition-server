@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.domain.petition.service;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequestDto;
@@ -37,6 +38,7 @@ class PetitionServiceTest {
     private PetitionService petitionService;
 
     @Mock private PetitionRepository petitionRepository;
+    @Mock private ApproverRepository approverRepository;
     @Mock private UserFacade userFacade;
     @Mock private PetitionFacade petitionFacade;
 
@@ -117,7 +119,9 @@ class PetitionServiceTest {
     @Test
     void givenPetitionId_whenSearchingPetitionDetail_thenReturnsPetitionDetail() {
         // given
+        given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
+        given(approverRepository.existsByUserAndPetition(defaultUser, defaultPetition)).willReturn(false);
 
         // when
         PetitionDetailResponseDto response = petitionService.getPetitionDetail(1L);
@@ -127,6 +131,7 @@ class PetitionServiceTest {
         assertEquals(response.getTitle(), defaultPetition.getTitle());
         assertEquals(response.getContent(), defaultPetition.getContent());
         assertEquals(response.getStatus(), defaultPetition.getStatus());
+        assertEquals(response.getApproved(), false);
     }
 
     @DisplayName("[Service] Petition 수정")

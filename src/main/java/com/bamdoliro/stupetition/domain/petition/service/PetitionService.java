@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.domain.petition.service;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class PetitionService {
 
     private final PetitionRepository petitionRepository;
+    private final ApproverRepository approverRepository;
     private final UserFacade userFacade;
     private final PetitionFacade petitionFacade;
 
@@ -51,7 +53,13 @@ public class PetitionService {
 
     @Transactional(readOnly = true)
     public PetitionDetailResponseDto getPetitionDetail(Long id) {
-        return PetitionDetailResponseDto.of(petitionFacade.findPetitionById(id));
+        User user = userFacade.getCurrentUser();
+        Petition petition = petitionFacade.findPetitionById(id);
+
+        return PetitionDetailResponseDto.of(
+                petition,
+                approverRepository.existsByUserAndPetition(user, petition)
+        );
     }
 
     @Transactional
