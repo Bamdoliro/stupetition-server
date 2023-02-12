@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface AnswerRepository extends CrudRepository<Answer, Long> {
 
-    Boolean existsPetitionCommenterByUserAndPetition(User user, Petition petition);
+    Boolean existsByUserAndPetition(User user, Petition petition);
 }

@@ -12,27 +12,17 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class RespondPetitionRequestDto {
-
-    @NotNull
-    private final Long petitionId;
+public class AnswerRequestDto {
 
     @NotNull
     @Size(min = 2, max = 500)
     private final String comment;
 
-    public Answer toAnswerEntity(User user, Petition petition) {
+    public Answer toEntity(User user, Petition petition) {
         return Answer.builder()
                 .user(user)
                 .petition(petition)
                 .comment(comment)
-                .build();
-    }
-
-    public Approver toApproverEntity(User user, Petition petition) {
-        return Approver.builder()
-                .user(user)
-                .petition(petition)
                 .build();
     }
 }

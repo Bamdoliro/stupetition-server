@@ -3,11 +3,11 @@ package com.bamdoliro.stupetition.domain.petition.exception;
 import com.bamdoliro.stupetition.global.error.exception.ErrorCode;
 import com.bamdoliro.stupetition.global.error.exception.StupetitionException;
 
-public class SamePetitionWriterAndAgreerException extends StupetitionException {
+public class SamePetitionWriterAndApproverException extends StupetitionException {
 
-    public static final SamePetitionWriterAndAgreerException EXCEPTION = new SamePetitionWriterAndAgreerException();
+    public static final SamePetitionWriterAndApproverException EXCEPTION = new SamePetitionWriterAndApproverException();
 
-     private SamePetitionWriterAndAgreerException() {
+     private SamePetitionWriterAndApproverException() {
          super(ErrorCode.SAME_BOARD_WRITER_AND_AGREER);
      }
 }

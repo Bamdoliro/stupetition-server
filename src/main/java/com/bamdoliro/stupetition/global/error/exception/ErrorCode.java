@@ -20,8 +20,9 @@ public enum ErrorCode {
     SCHOOL_NOT_FOUND(404, "학교를 찾을 수 없습니다."),
 
     BOARD_NOT_FOUND(404, "글을 찾을 수 없습니다."),
-    USER_IS_NOT_WRITER(403, "글의 작성자가 아닙니다."),
-    USER_ALREADY_JOIN(422, "이미 해당 글에 흔적을 남겼습니다."),
+    USER_IS_NOT_WRITER(401, "글의 작성자가 아닙니다."),
+    ALREADY_APPROVE(422, "이미 동의했습니다."),
+    ALREADY_ANSWER(422, "이미 답변했습니다."),
     SAME_BOARD_WRITER_AND_AGREER(422, "본인의 글에 동의할 수 없습니다."),
     STATUS_MISMATCH(401, "Status 가 맞지 않습니다.")
     ;

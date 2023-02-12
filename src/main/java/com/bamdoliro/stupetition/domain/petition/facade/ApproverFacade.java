@@ -2,8 +2,8 @@ package com.bamdoliro.stupetition.domain.petition.facade;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
-import com.bamdoliro.stupetition.domain.petition.exception.SamePetitionWriterAndAgreerException;
-import com.bamdoliro.stupetition.domain.petition.exception.UserAlreadyJoinException;
+import com.bamdoliro.stupetition.domain.petition.exception.SamePetitionWriterAndApproverException;
+import com.bamdoliro.stupetition.domain.petition.exception.AlreadyApproveException;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -14,15 +14,15 @@ public class ApproverFacade {
 
     private final ApproverRepository approverRepository;
 
-    public void checkAgreerPetition(User user, Petition petition) {
+    public void checkApprovePetition(User user, Petition petition) {
         if (approverRepository.existsByUserAndPetition(user, petition)) {
-            throw UserAlreadyJoinException.EXCEPTION;
+            throw AlreadyApproveException.EXCEPTION;
         }
     }
 
-    public void checkPetitionWriterAndAgreer(User user, Petition petition) {
+    public void checkPetitionWriterAndApprover(User user, Petition petition) {
         if (petition.getUser().equals(user)) {
-            throw SamePetitionWriterAndAgreerException.EXCEPTION;
+            throw SamePetitionWriterAndApproverException.EXCEPTION;
         }
     }
 }
