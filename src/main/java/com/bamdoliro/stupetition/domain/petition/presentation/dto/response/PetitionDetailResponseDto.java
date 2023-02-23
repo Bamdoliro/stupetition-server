@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.petition.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,7 +15,6 @@ import java.util.stream.Collectors;
 public class PetitionDetailResponseDto {
 
     private Long id;
-    private String userEmail;
     private String title;
     private String content;
     private Status status;
@@ -23,11 +23,11 @@ public class PetitionDetailResponseDto {
     private LocalDateTime createdAt;
     private List<CommentResponseDto> comments;
     private String answer;
+    private UserResponseDto writer;
 
     public static PetitionDetailResponseDto of(Petition petition, Boolean approved, int numberOfApprover) {
         return PetitionDetailResponseDto.builder()
                 .id(petition.getId())
-                .userEmail(petition.getUser().getEmail())
                 .title(petition.getTitle())
                 .content(petition.getContent())
                 .status(petition.getStatus())
@@ -38,6 +38,7 @@ public class PetitionDetailResponseDto {
                         .map(CommentResponseDto::of)
                         .collect(Collectors.toList()))
                 .answer(petition.getStatus() == Status.ANSWERED ? petition.getAnswer().getComment() : null)
+                .writer(UserResponseDto.of(petition.getUser()))
                 .build();
     }
 }
