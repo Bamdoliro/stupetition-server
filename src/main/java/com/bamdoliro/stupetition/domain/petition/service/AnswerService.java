@@ -30,6 +30,7 @@ public class AnswerService {
         answerPetition(user, petition, request);
     }
 
+    @Transactional
     private void answerPetition(User user, Petition petition, AnswerRequest request) {
 
         petition.updateStatus(Status.ANSWERED);
