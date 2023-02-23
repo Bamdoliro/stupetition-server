@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class CommentRequestDto {
+public class CommentRequest {
 
     @NotNull
     private Long petitionId;

@@ -2,7 +2,7 @@ package com.bamdoliro.stupetition.domain.petition.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
-public class PetitionDetailResponseDto {
+public class PetitionDetailResponse {
 
     private Long id;
     private String title;
@@ -21,12 +21,12 @@ public class PetitionDetailResponseDto {
     private Boolean approved;
     private int numberOfApprover;
     private LocalDateTime createdAt;
-    private List<CommentResponseDto> comments;
+    private List<CommentResponse> comments;
     private String answer;
-    private UserResponseDto writer;
+    private UserResponse writer;
 
-    public static PetitionDetailResponseDto of(Petition petition, Boolean approved, int numberOfApprover) {
-        return PetitionDetailResponseDto.builder()
+    public static PetitionDetailResponse of(Petition petition, Boolean approved, int numberOfApprover) {
+        return PetitionDetailResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
                 .content(petition.getContent())
@@ -35,10 +35,10 @@ public class PetitionDetailResponseDto {
                 .numberOfApprover(numberOfApprover)
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
-                        .map(CommentResponseDto::of)
+                        .map(CommentResponse::of)
                         .collect(Collectors.toList()))
                 .answer(petition.getStatus() == Status.ANSWERED ? petition.getAnswer().getComment() : null)
-                .writer(UserResponseDto.of(petition.getUser()))
+                .writer(UserResponse.of(petition.getUser()))
                 .build();
     }
 }

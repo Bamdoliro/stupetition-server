@@ -5,7 +5,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.repository.AnswerReposit
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.AnswerFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequestDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequest;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +22,17 @@ public class AnswerService {
     private final AnswerFacade answerFacade;
 
     @Transactional
-    public void answerPetition(Long petitionId, AnswerRequestDto dto) {
+    public void answerPetition(Long petitionId, AnswerRequest request) {
         User user = userFacade.getCurrentUser();
         Petition petition = petitionFacade.findPetitionById(petitionId);
         answerFacade.checkAnswer(user, petition);
 
-        answerPetition(user, petition, dto);
+        answerPetition(user, petition, request);
     }
 
-    private void answerPetition(User user, Petition petition, AnswerRequestDto dto) {
+    private void answerPetition(User user, Petition petition, AnswerRequest request) {
 
         petition.updateStatus(Status.ANSWERED);
-        answerRepository.save(dto.toEntity(user, petition));
+        answerRepository.save(request.toEntity(user, petition));
     }
 }

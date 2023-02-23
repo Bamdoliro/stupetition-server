@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class AnswerRequestDto {
+public class AnswerRequest {
 
     @NotBlank
     @Size(min = 2, max = 500)

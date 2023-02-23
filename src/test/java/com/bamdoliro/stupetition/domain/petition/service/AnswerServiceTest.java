@@ -6,7 +6,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.repository.AnswerReposit
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.AnswerFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequestDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequest;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
@@ -80,7 +80,7 @@ class AnswerServiceTest {
 
 
         // when
-        answerService.answerPetition(1L, new AnswerRequestDto("content"));
+        answerService.answerPetition(1L, new AnswerRequest("content"));
 
         // then
         verify(answerFacade, times(1)).checkAnswer(studentCouncil, defaultPetition);

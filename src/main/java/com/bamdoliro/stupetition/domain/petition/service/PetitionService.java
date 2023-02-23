@@ -5,10 +5,10 @@ import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepos
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequestDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequestDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponseDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponseDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequest;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponse;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponse;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
@@ -28,35 +28,35 @@ public class PetitionService {
     private final PetitionFacade petitionFacade;
 
     @Transactional
-    public void createPetition(CreatePetitionRequestDto dto) {
+    public void createPetition(CreatePetitionRequest request) {
         User user = userFacade.getCurrentUser();
 
-        petitionRepository.save(dto.toEntity(user));
+        petitionRepository.save(request.toEntity(user));
     }
 
     @Transactional(readOnly = true)
-    public List<PetitionResponseDto> getPetitions(Status status) {
+    public List<PetitionResponse> getPetitions(Status status) {
         User user = userFacade.getCurrentUser();
 
 
         return petitionRepository.findPetitionsBySchoolAndStatus(user.getSchool(), status)
-                .stream().map(PetitionResponseDto::of).collect(Collectors.toList());
+                .stream().map(PetitionResponse::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<PetitionResponseDto> getUserPetitions() {
+    public List<PetitionResponse> getUserPetitions() {
         User user = userFacade.getCurrentUser();
 
         return petitionRepository.findPetitionsByUser(user)
-                .stream().map(PetitionResponseDto::of).collect(Collectors.toList());
+                .stream().map(PetitionResponse::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public PetitionDetailResponseDto getPetitionDetail(Long id) {
+    public PetitionDetailResponse getPetitionDetail(Long id) {
         User user = userFacade.getCurrentUser();
         Petition petition = petitionFacade.findPetitionById(id);
 
-        return PetitionDetailResponseDto.of(
+        return PetitionDetailResponse.of(
                 petition,
                 approverRepository.existsByUserAndPetition(user, petition),
                 approverRepository.countByPetition(petition)
@@ -64,14 +64,14 @@ public class PetitionService {
     }
 
     @Transactional
-    public void updatePetition(Long id, UpdatePetitionRequestDto dto) {
+    public void updatePetition(Long id, UpdatePetitionRequest request) {
         Petition petition = petitionFacade.findPetitionById(id);
         petitionFacade.checkWriter(
                 userFacade.getCurrentUser(),
                 petition
         );
 
-        petition.updatePetition(dto.getTitle(), dto.getContent());
+        petition.updatePetition(request.getTitle(), request.getContent());
     }
 
     @Transactional

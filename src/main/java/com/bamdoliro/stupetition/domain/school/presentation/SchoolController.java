@@ -1,6 +1,6 @@
 package com.bamdoliro.stupetition.domain.school.presentation;
 
-import com.bamdoliro.stupetition.domain.school.presentation.dto.response.SchoolResponseDto;
+import com.bamdoliro.stupetition.domain.school.presentation.dto.response.SchoolResponse;
 import com.bamdoliro.stupetition.domain.school.service.SchoolService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ public class SchoolController {
     private final SchoolService schoolService;
 
     @GetMapping("/search")
-    public List<SchoolResponseDto> searchSchool(@RequestParam(name = "q") final String schoolName) {
+    public List<SchoolResponse> searchSchool(@RequestParam(name = "q") final String schoolName) {
         return schoolService.searchSchool(schoolName);
     }
 }

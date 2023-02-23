@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @AllArgsConstructor
-public class UpdatePetitionRequestDto {
+public class UpdatePetitionRequest {
 
     @NotNull(message = "제목을 입력해 주세요.")
     @Size(min = 2, max = 20)

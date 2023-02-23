@@ -5,8 +5,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
 import com.bamdoliro.stupetition.domain.petition.facade.CommentFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
-import com.bamdoliro.stupetition.domain.petition.presentation.CommentController;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CommentRequestDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CommentRequest;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +22,11 @@ public class CommentService {
     private final CommentFacade commentFacade;
 
     @Transactional
-    public void writeComment(CommentRequestDto dto) {
+    public void writeComment(CommentRequest request) {
         User user = userFacade.getCurrentUser();
-        Petition petition = petitionFacade.findPetitionById(dto.getPetitionId());
+        Petition petition = petitionFacade.findPetitionById(request.getPetitionId());
 
-        commentRepository.save(dto.toEntity(user, petition));
+        commentRepository.save(request.toEntity(user, petition));
     }
 
     @Transactional

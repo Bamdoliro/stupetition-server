@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class PetitionResponseDto {
+public class PetitionResponse {
 
     private Long id;
     private String title;
     private LocalDateTime createdAt;
 
-    public static PetitionResponseDto of(Petition petition) {
-        return PetitionResponseDto.builder()
+    public static PetitionResponse of(Petition petition) {
+        return PetitionResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
                 .createdAt(petition.getCreatedAt())

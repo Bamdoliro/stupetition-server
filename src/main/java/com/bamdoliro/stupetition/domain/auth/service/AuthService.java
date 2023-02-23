@@ -2,9 +2,9 @@ package com.bamdoliro.stupetition.domain.auth.service;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
-import com.bamdoliro.stupetition.domain.auth.presentation.dto.response.TokenResponseDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequest;
+import com.bamdoliro.stupetition.domain.auth.presentation.dto.response.TokenResponse;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import com.bamdoliro.stupetition.global.redis.RedisService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
@@ -24,18 +24,18 @@ public class AuthService {
     private final UserFacade userFacade;
     private final JwtValidateService jwtValidateService;
 
-    public TokenResponseDto loginUser(LoginUserRequestDto dto) {
-        User user = userFacade.findUserByEmail(dto.getEmail());
-        user.checkPassword(dto.getPassword(), passwordEncoder);
+    public TokenResponse loginUser(LoginUserRequest request) {
+        User user = userFacade.findUserByEmail(request.getEmail());
+        user.checkPassword(request.getPassword(), passwordEncoder);
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-        redisService.setDataExpire(dto.getEmail(), refreshToken, REFRESH_TOKEN_VALID_TIME);
+        redisService.setDataExpire(request.getEmail(), refreshToken, REFRESH_TOKEN_VALID_TIME);
 
-        return TokenResponseDto.builder()
+        return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .user(UserResponseDto.of(user))
+                .user(UserResponse.of(user))
                 .build();
     }
 
@@ -44,8 +44,8 @@ public class AuthService {
         redisService.deleteData(user.getEmail());
     }
 
-    public TokenResponseDto refreshToken(String refreshToken) {
-        return TokenResponseDto.builder()
+    public TokenResponse refreshToken(String refreshToken) {
+        return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userFacade.findUserByEmail(jwtValidateService.getEmail(refreshToken))))
                 .build();

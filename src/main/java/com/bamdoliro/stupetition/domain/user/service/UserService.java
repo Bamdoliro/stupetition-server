@@ -4,10 +4,10 @@ import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequestDto;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,31 +23,31 @@ public class UserService {
     private final SchoolFacade schoolFacade;
 
     @Transactional
-    public void createUser(CreateUserRequestDto dto) {
-        userFacade.checkUser(dto.getEmail());
-        userRepository.save(dto.toEntity(
-                passwordEncoder.encode(dto.getPassword()),
-                schoolFacade.findSchoolById(dto.getSchoolId())));
+    public void createUser(CreateUserRequest request) {
+        userFacade.checkUser(request.getEmail());
+        userRepository.save(request.toEntity(
+                passwordEncoder.encode(request.getPassword()),
+                schoolFacade.findSchoolById(request.getSchoolId())));
     }
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUserInformation() {
+    public UserResponse getUserInformation() {
         User user = userFacade.getCurrentUser();
-        return UserResponseDto.of(user);
+        return UserResponse.of(user);
     }
 
     @Transactional
-    public void updateUserPassword(UpdateUserPasswordRequestDto dto) {
+    public void updateUserPassword(UpdateUserPasswordRequest request) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(dto.getCurrentPassword(), passwordEncoder);
+        user.checkPassword(request.getCurrentPassword(), passwordEncoder);
 
-        user.updatePassword(passwordEncoder.encode(dto.getPassword()));
+        user.updatePassword(passwordEncoder.encode(request.getPassword()));
     }
 
     @Transactional
-    public void deleteUser(DeleteUserRequestDto dto) {
+    public void deleteUser(DeleteUserRequest request) {
         User user = userFacade.getCurrentUser();
-        user.checkPassword(dto.getPassword(), passwordEncoder);
+        user.checkPassword(request.getPassword(), passwordEncoder);
 
         userRepository.delete(user);
     }

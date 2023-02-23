@@ -6,14 +6,14 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class SchoolResponseDto {
+public class SchoolResponse {
 
     private Long id;
     private String name;
     private String emailDomain;
 
-    public static SchoolResponseDto fromEntity(School school) {
-        return SchoolResponseDto.builder()
+    public static SchoolResponse fromEntity(School school) {
+        return SchoolResponse.builder()
                 .id(school.getId())
                 .name(school.getName())
                 .emailDomain(school.getEmailDomain())

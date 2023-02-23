@@ -1,8 +1,8 @@
 package com.bamdoliro.stupetition.domain.auth.presentation;
 
 import com.bamdoliro.stupetition.domain.auth.service.AuthService;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequestDto;
-import com.bamdoliro.stupetition.domain.auth.presentation.dto.response.TokenResponseDto;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.LoginUserRequest;
+import com.bamdoliro.stupetition.domain.auth.presentation.dto.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +16,10 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping
-    public TokenResponseDto loginUser(
-            @RequestBody @Valid LoginUserRequestDto dto
+    public TokenResponse loginUser(
+            @RequestBody @Valid LoginUserRequest request
     ) {
-        return authService.loginUser(dto);
+        return authService.loginUser(request);
     }
 
     @DeleteMapping
@@ -28,7 +28,7 @@ public class AuthController {
     }
 
     @PutMapping
-    public TokenResponseDto refreshToken(
+    public TokenResponse refreshToken(
             @RequestHeader(value = "Refresh-Token") String refreshToken
     ) {
         return authService.refreshToken(refreshToken);

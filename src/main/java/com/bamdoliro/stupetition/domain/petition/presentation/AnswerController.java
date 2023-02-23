@@ -1,6 +1,6 @@
 package com.bamdoliro.stupetition.domain.petition.presentation;
 
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequestDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequest;
 import com.bamdoliro.stupetition.domain.petition.service.AnswerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +17,9 @@ public class AnswerController {
     @PostMapping
     public void answerPetition(
             @PathVariable("petition-id") Long petitionId,
-            @RequestBody @Valid AnswerRequestDto dto
+            @RequestBody @Valid AnswerRequest request
     ) {
-        answerService.answerPetition(petitionId, dto);
+        answerService.answerPetition(petitionId, request);
     }
 
 }

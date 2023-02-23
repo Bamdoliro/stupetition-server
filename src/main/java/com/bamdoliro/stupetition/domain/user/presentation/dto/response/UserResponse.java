@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserResponseDto {
+public class UserResponse {
 
     private Long userId;
     private String schoolName;
@@ -16,8 +16,8 @@ public class UserResponseDto {
     private Authority authority;
     private Status status;
 
-    public static UserResponseDto of(User user) {
-        return UserResponseDto.builder()
+    public static UserResponse of(User user) {
+        return UserResponse.builder()
                 .userId(user.getId())
                 .schoolName(user.getSchool().getName())
                 .email(user.getEmail())

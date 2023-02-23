@@ -1,6 +1,6 @@
 package com.bamdoliro.stupetition.domain.petition.presentation;
 
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CommentRequestDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CommentRequest;
 import com.bamdoliro.stupetition.domain.petition.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +16,9 @@ public class CommentController {
 
     @PostMapping
     public void writeComment(
-            @RequestBody @Valid CommentRequestDto dto
+            @RequestBody @Valid CommentRequest request
     ) {
-        commentService.writeComment(dto);
+        commentService.writeComment(request);
     }
 
     @DeleteMapping("/{comment-id}")

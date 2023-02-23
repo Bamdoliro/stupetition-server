@@ -4,10 +4,10 @@ import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequestDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequestDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponseDto;
-import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponseDto;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequest;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponse;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponse;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
@@ -72,7 +72,7 @@ class PetitionServiceTest {
         ArgumentCaptor<Petition> captor = ArgumentCaptor.forClass(Petition.class);
 
         // when
-        petitionService.createPetition(new CreatePetitionRequestDto("title", "content"));
+        petitionService.createPetition(new CreatePetitionRequest("title", "content"));
 
         // then
         verify(petitionRepository, times(1)).save(captor.capture());
@@ -92,7 +92,7 @@ class PetitionServiceTest {
                 .willReturn(List.of(defaultPetition, defaultPetition));
 
         // when
-        List<PetitionResponseDto> petitionResponse = petitionService.getPetitions(PETITION);
+        List<PetitionResponse> petitionResponse = petitionService.getPetitions(PETITION);
 
         // then
         verify(petitionRepository, times(1)).findPetitionsBySchoolAndStatus(defaultUser.getSchool(), PETITION);
@@ -108,7 +108,7 @@ class PetitionServiceTest {
                 .willReturn(List.of(defaultPetition, defaultPetition));
 
         // when
-        List<PetitionResponseDto> petitionResponse = petitionService.getUserPetitions();
+        List<PetitionResponse> petitionResponse = petitionService.getUserPetitions();
 
         // then
         verify(petitionRepository, times(1)).findPetitionsByUser(defaultUser);
@@ -125,7 +125,7 @@ class PetitionServiceTest {
         given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
 
         // when
-        PetitionDetailResponseDto response = petitionService.getPetitionDetail(1L);
+        PetitionDetailResponse response = petitionService.getPetitionDetail(1L);
 
         // then
         verify(petitionFacade, times(1)).findPetitionById(1L);
@@ -145,7 +145,7 @@ class PetitionServiceTest {
         willDoNothing().given(petitionFacade).checkWriter(defaultUser, defaultPetition);
 
         // when
-        petitionService.updatePetition(1L, new UpdatePetitionRequestDto("newTitle", "newContent"));
+        petitionService.updatePetition(1L, new UpdatePetitionRequest("newTitle", "newContent"));
 
         // then
         verify(petitionFacade, times(1)).checkWriter(defaultUser, defaultPetition);
