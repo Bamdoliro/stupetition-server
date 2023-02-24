@@ -12,12 +12,14 @@ public class PetitionResponse {
 
     private Long id;
     private String title;
+    private int numberOfApprover;
     private LocalDateTime createdAt;
 
-    public static PetitionResponse of(Petition petition) {
+    public static PetitionResponse of(Petition petition, int numberOfApprover) {
         return PetitionResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
+                .numberOfApprover(numberOfApprover)
                 .createdAt(petition.getCreatedAt())
                 .build();
     }

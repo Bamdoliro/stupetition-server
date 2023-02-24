@@ -40,7 +40,9 @@ public class PetitionService {
         User user = userFacade.getCurrentUser();
 
         return petitionRepository.findPetitionsBySchoolAndStatus(user.getSchool(), status)
-                .stream().map(PetitionResponse::of).collect(Collectors.toList());
+                .stream()
+                .map(this::createPetitionResponse)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +50,7 @@ public class PetitionService {
         User user = userFacade.getCurrentUser();
 
         return petitionRepository.findPetitionsByUser(user)
-                .stream().map(PetitionResponse::of).collect(Collectors.toList());
+                .stream().map(this::createPetitionResponse).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -57,7 +59,7 @@ public class PetitionService {
 
         return approverRepository.findAllByUser(user).stream()
                 .map(Approver::getPetition)
-                .map(PetitionResponse::of)
+                .map(this::createPetitionResponse)
                 .collect(Collectors.toList());
     }
 
@@ -92,5 +94,11 @@ public class PetitionService {
         );
 
         petitionRepository.deleteById(id);
+    }
+
+    private PetitionResponse createPetitionResponse(Petition p) {
+        return PetitionResponse.of(p,
+                approverRepository.countByPetition(p)
+        );
     }
 }

@@ -90,6 +90,7 @@ class PetitionServiceTest {
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(petitionRepository.findPetitionsBySchoolAndStatus(defaultSchool, PETITION))
                 .willReturn(List.of(defaultPetition, defaultPetition));
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
 
         // when
         List<PetitionResponse> petitionResponse = petitionService.getPetitions(PETITION);
@@ -106,6 +107,7 @@ class PetitionServiceTest {
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(petitionRepository.findPetitionsByUser(defaultUser))
                 .willReturn(List.of(defaultPetition, defaultPetition));
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
 
         // when
         List<PetitionResponse> petitionResponse = petitionService.getWrotePetitions();
