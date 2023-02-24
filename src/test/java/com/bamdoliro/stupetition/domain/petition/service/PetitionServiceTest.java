@@ -108,7 +108,7 @@ class PetitionServiceTest {
                 .willReturn(List.of(defaultPetition, defaultPetition));
 
         // when
-        List<PetitionResponse> petitionResponse = petitionService.getUserPetitions();
+        List<PetitionResponse> petitionResponse = petitionService.getWrotePetitions();
 
         // then
         verify(petitionRepository, times(1)).findPetitionsByUser(defaultUser);

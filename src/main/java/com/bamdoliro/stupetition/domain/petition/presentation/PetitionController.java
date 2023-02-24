@@ -29,9 +29,14 @@ public class PetitionController {
         return petitionService.getPetitions(status);
     }
 
-    @GetMapping("/my")
-    public List<PetitionResponse> getUserPetitions() {
-        return petitionService.getUserPetitions();
+    @GetMapping("/wrote")
+    public List<PetitionResponse> getWrotePetitions() {
+        return petitionService.getWrotePetitions();
+    }
+
+    @GetMapping("/approved")
+    public List<PetitionResponse> getApprovedPetitions() {
+        return petitionService.getApprovedPetitions();
     }
 
     @GetMapping("/{id}")

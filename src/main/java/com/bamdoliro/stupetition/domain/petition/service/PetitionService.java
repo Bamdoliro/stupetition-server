@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.petition.service;
 
+import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
@@ -38,17 +39,26 @@ public class PetitionService {
     public List<PetitionResponse> getPetitions(Status status) {
         User user = userFacade.getCurrentUser();
 
-
         return petitionRepository.findPetitionsBySchoolAndStatus(user.getSchool(), status)
                 .stream().map(PetitionResponse::of).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<PetitionResponse> getUserPetitions() {
+    public List<PetitionResponse> getWrotePetitions() {
         User user = userFacade.getCurrentUser();
 
         return petitionRepository.findPetitionsByUser(user)
                 .stream().map(PetitionResponse::of).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PetitionResponse> getApprovedPetitions() {
+        User user = userFacade.getCurrentUser();
+
+        return approverRepository.findAllByUser(user).stream()
+                .map(Approver::getPetition)
+                .map(PetitionResponse::of)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -83,5 +93,4 @@ public class PetitionService {
 
         petitionRepository.deleteById(id);
     }
-
 }
