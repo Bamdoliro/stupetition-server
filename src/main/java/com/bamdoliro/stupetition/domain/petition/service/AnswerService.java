@@ -27,12 +27,6 @@ public class AnswerService {
         Petition petition = petitionFacade.findPetitionById(petitionId);
         answerFacade.checkAnswer(user, petition);
 
-        answerPetition(user, petition, request);
-    }
-
-    @Transactional
-    private void answerPetition(User user, Petition petition, AnswerRequest request) {
-
         petition.updateStatus(Status.ANSWERED);
         answerRepository.save(request.toEntity(user, petition));
     }
