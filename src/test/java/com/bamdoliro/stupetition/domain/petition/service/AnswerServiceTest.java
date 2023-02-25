@@ -35,7 +35,6 @@ class AnswerServiceTest {
     @Mock private AnswerRepository answerRepository;
     @Mock private UserFacade userFacade;
     @Mock private PetitionFacade petitionFacade;
-    @Mock private AnswerFacade answerFacade;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -76,14 +75,12 @@ class AnswerServiceTest {
         given(userFacade.getCurrentUser()).willReturn(studentCouncil);
         given(answerRepository.save(any())).willReturn(answer);
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
-        willDoNothing().given(answerFacade).checkAnswer(studentCouncil, defaultPetition);
 
 
         // when
         answerService.answerPetition(1L, new AnswerRequest("content"));
 
         // then
-        verify(answerFacade, times(1)).checkAnswer(studentCouncil, defaultPetition);
         verify(answerRepository, times(1)).save(captor.capture());
         Answer savedAnswer = captor.getValue();
         assertEquals(studentCouncil, savedAnswer.getUser());
