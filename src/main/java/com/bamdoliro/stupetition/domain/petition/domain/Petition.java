@@ -46,9 +46,8 @@ public class Petition extends BaseTimeEntity {
     @OneToMany(mappedBy = "petition")
     private List<Comment> comment = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "peitition", nullable = true)
-    private Answer answer;
+    @OneToMany(mappedBy = "petition")
+    private List<Answer> answer = new ArrayList<>();
 
     @Builder
     public Petition(School school, User user, String title, String content) {

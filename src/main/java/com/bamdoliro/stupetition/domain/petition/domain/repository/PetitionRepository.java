@@ -16,6 +16,6 @@ public interface PetitionRepository extends JpaRepository<Petition, Long> {
 
     List<Petition> findPetitionsByUser(User user);
 
-    @Query("SELECT p FROM Petition p JOIN FETCH p.user WHERE p.id = :id")
+    @Query("SELECT p FROM Petition p JOIN FETCH p.answer WHERE p.id = :id")
     Optional<Petition> findPetitionById(Long id);
 }
