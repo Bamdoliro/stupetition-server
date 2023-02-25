@@ -25,7 +25,6 @@ public class AnswerService {
     public void answerPetition(Long petitionId, AnswerRequest request) {
         User user = userFacade.getCurrentUser();
         Petition petition = petitionFacade.findPetitionById(petitionId);
-        answerFacade.checkAnswer(user, petition);
 
         petition.updateStatus(Status.ANSWERED);
         answerRepository.save(request.toEntity(user, petition));
