@@ -8,6 +8,6 @@ public class SamePetitionWriterAndApproverException extends StupetitionException
     public static final SamePetitionWriterAndApproverException EXCEPTION = new SamePetitionWriterAndApproverException();
 
      private SamePetitionWriterAndApproverException() {
-         super(ErrorCode.SAME_BOARD_WRITER_AND_AGREER);
+         super(ErrorCode.SAME_PETITION_WRITER_AND_AGREER);
      }
 }

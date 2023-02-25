@@ -5,17 +5,19 @@ import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class AnswerRequest {
 
     @NotBlank
     @Size(min = 2, max = 500)
-    private final String comment;
+    private String comment;
 
     public Answer toEntity(User user, Petition petition) {
         return Answer.builder()

@@ -8,6 +8,6 @@ public class CommentNotFoundException extends StupetitionException {
     public final static StupetitionException EXCEPTION = new CommentNotFoundException();
 
     private CommentNotFoundException() {
-        super(ErrorCode.BOARD_NOT_FOUND);
+        super(ErrorCode.PETITION_NOT_FOUND);
     }
 }

@@ -19,7 +19,7 @@ public class CommentRequest {
 
     @NotBlank
     @Size(min = 2, max = 500)
-    private final String comment;
+    private String comment;
 
     public Comment toEntity(User user, Petition petition) {
         return Comment.builder()

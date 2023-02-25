@@ -8,6 +8,6 @@ public class PetitionNotFoundException extends StupetitionException {
     public final static StupetitionException EXCEPTION = new PetitionNotFoundException();
 
     private PetitionNotFoundException() {
-        super(ErrorCode.BOARD_NOT_FOUND);
+        super(ErrorCode.PETITION_NOT_FOUND);
     }
 }
