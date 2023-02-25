@@ -1,6 +1,5 @@
 package com.bamdoliro.stupetition.domain.petition.presentation.dto.response;
 
-import com.bamdoliro.stupetition.domain.petition.domain.Answer;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
@@ -23,7 +22,7 @@ public class PetitionDetailResponse {
     private int numberOfApprover;
     private LocalDateTime createdAt;
     private List<CommentResponse> comments;
-    private List<String> answer;
+    private List<AnswerResponse> answer;
     private UserResponse writer;
 
     public static PetitionDetailResponse of(Petition petition, Boolean approved, int numberOfApprover) {
@@ -40,7 +39,7 @@ public class PetitionDetailResponse {
                         .collect(Collectors.toList()))
                 .answer(petition.getStatus() == Status.ANSWERED ?
                         petition.getAnswer().stream()
-                                .map(Answer::getComment)
+                                .map(AnswerResponse::of)
                                 .collect(Collectors.toList())
                         : null)
                 .writer(UserResponse.of(petition.getUser()))
