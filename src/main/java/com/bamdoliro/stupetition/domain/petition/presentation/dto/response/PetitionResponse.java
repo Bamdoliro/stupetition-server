@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.domain.petition.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,12 +18,12 @@ public class PetitionResponse {
     private int numberOfApprover;
     private LocalDateTime createdAt;
 
-    public static PetitionResponse of(Petition petition, int numberOfApprover) {
+    public static PetitionResponse of(Petition petition, ApproverRepository approverRepository) {
         return PetitionResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
                 .status(petition.getStatus())
-                .numberOfApprover(numberOfApprover)
+                .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
                 .build();
     }

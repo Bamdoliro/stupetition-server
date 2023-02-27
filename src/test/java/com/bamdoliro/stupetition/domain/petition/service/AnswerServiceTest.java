@@ -19,6 +19,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -48,6 +50,7 @@ class AnswerServiceTest {
             .user(defaultUser)
             .title("title")
             .content("content")
+            .endDate(LocalDateTime.MAX)
             .build();
 
     private User createUser(Authority authority) {

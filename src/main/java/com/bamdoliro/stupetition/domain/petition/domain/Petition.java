@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.petition.domain;
 
+import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
@@ -78,5 +79,13 @@ public class Petition extends BaseTimeEntity {
         }
 
         return status;
+    }
+
+    public int getNumberOfApprover(ApproverRepository approverRepository) {
+        return approverRepository.countByPetition(this);
+    }
+
+    public Boolean hasUserApproved(User user, ApproverRepository approverRepository) {
+        return approverRepository.existsByUserAndPetition(user, this);
     }
 }

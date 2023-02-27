@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.bamdoliro.stupetition.domain.petition.domain.type.Status.PETITION;
@@ -60,6 +61,7 @@ class PetitionServiceTest {
             .user(defaultUser)
             .title("title")
             .content("content")
+            .endDate(LocalDateTime.MAX)
             .build();
 
 
@@ -88,7 +90,7 @@ class PetitionServiceTest {
     void givenPetitionStatus_whenSearchingPetitionPetitionInUserSchool_thenReturnsPetitionPetitionInTheSchool() {
         // given
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
-        given(petitionRepository.findPetitionsBySchoolAndStatus(defaultSchool, PETITION))
+        given(petitionRepository.findPetitions(defaultSchool))
                 .willReturn(List.of(defaultPetition, defaultPetition));
         given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
 
@@ -96,7 +98,7 @@ class PetitionServiceTest {
         List<PetitionResponse> petitionResponse = petitionService.getPetitions(PETITION);
 
         // then
-        verify(petitionRepository, times(1)).findPetitionsBySchoolAndStatus(defaultUser.getSchool(), PETITION);
+        verify(petitionRepository, times(1)).findPetitions(defaultUser.getSchool());
         assertEquals(petitionResponse.get(1).getTitle(), defaultPetition.getTitle());
     }
 

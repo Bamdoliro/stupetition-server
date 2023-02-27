@@ -15,7 +15,7 @@ public class ApproverFacade {
     private final ApproverRepository approverRepository;
 
     public void checkApprovePetition(User user, Petition petition) {
-        if (approverRepository.existsByUserAndPetition(user, petition)) {
+        if (petition.hasUserApproved(user, approverRepository)) {
             throw AlreadyApproveException.EXCEPTION;
         }
     }

@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.domain.petition.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
@@ -26,14 +27,14 @@ public class PetitionDetailResponse {
     private List<AnswerResponse> answer;
     private UserResponse writer;
 
-    public static PetitionDetailResponse of(Petition petition, Boolean approved, int numberOfApprover, User user) {
+    public static PetitionDetailResponse of(Petition petition, ApproverRepository approverRepository, User user) {
         return PetitionDetailResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
                 .content(petition.getContent())
                 .status(petition.getStatus())
-                .approved(approved)
-                .numberOfApprover(numberOfApprover)
+                .approved(petition.hasUserApproved(user, approverRepository))
+                .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
                         .map(c -> CommentResponse.of(c, user))
