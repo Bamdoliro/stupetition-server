@@ -71,7 +71,8 @@ public class PetitionService {
         return PetitionDetailResponse.of(
                 petition,
                 approverRepository.existsByUserAndPetition(user, petition),
-                approverRepository.countByPetition(petition)
+                approverRepository.countByPetition(petition),
+                user
         );
     }
 
