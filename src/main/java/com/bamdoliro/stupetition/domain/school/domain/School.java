@@ -1,6 +1,7 @@
 package com.bamdoliro.stupetition.domain.school.domain;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -33,5 +34,9 @@ public class School extends BaseTimeEntity {
     public School(String name, String emailDomain) {
         this.name = name;
         this.emailDomain = emailDomain;
+    }
+
+    public int getNumberOfStudents(UserRepository userRepository) {
+        return userRepository.countBySchool(this);
     }
 }

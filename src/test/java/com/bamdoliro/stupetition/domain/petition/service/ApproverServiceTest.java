@@ -3,10 +3,12 @@ package com.bamdoliro.stupetition.domain.petition.service;
 import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
+import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.ApproverFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +36,7 @@ class ApproverServiceTest {
     @Mock private UserFacade userFacade;
     @Mock private PetitionFacade petitionFacade;
     @Mock private ApproverFacade approverFacade;
+    @Mock private UserRepository userRepository;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -52,6 +55,7 @@ class ApproverServiceTest {
     private User createUser(Authority authority) {
         return User.builder()
                 .authority(authority)
+                .school(defaultSchool)
                 .build();
     }
 
@@ -74,6 +78,8 @@ class ApproverServiceTest {
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
         willDoNothing().given(approverFacade).checkApprovePetition(student, defaultPetition);
         given(approverRepository.save(any())).willReturn(agreer);
+        given(userRepository.countBySchool(defaultSchool)).willReturn(201);
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(100);
 
         // when
         approverService.approvePetition(1L);
@@ -85,5 +91,6 @@ class ApproverServiceTest {
         Approver savedApprover = captor.getValue();
         assertEquals(student, savedApprover.getUser());
         assertEquals(defaultPetition, savedApprover.getPetition());
+        assertEquals(Status.WAITING, defaultPetition.getStatus());
     }
 }
