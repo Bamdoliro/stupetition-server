@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
@@ -26,6 +27,7 @@ public class CreatePetitionRequest {
                 .user(user)
                 .title(title)
                 .content(content)
+                .endDate(LocalDateTime.now().plusWeeks(2))
                 .build();
     }
 }

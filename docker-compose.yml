@@ -9,6 +9,7 @@ services:
       MYSQL_USER: "bamdoliro"
       MYSQL_PASSWORD: "bamdoliro"
       MYSQL_DATABASE: "bamdoliro_stupetition"
+      TZ: Asia/Seoul
     ports:
       - "3308:3306"
     command:

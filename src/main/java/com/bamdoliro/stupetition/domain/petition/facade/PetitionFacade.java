@@ -9,6 +9,7 @@ import com.bamdoliro.stupetition.domain.petition.exception.UserIsNotWriterExcept
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class PetitionFacade {
 
     private final PetitionRepository petitionRepository;
 
+    @Transactional
     public Petition findPetitionById(Long id) {
         return petitionRepository.findPetitionById(id)
                 .orElseThrow(() -> PetitionNotFoundException.EXCEPTION);

@@ -9,6 +9,7 @@ services:
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PWD}
       MYSQL_DATABASE: ${DB_NAME}
+      TZ: Asia/Seoul
     ports:
       - "3306:3306"
     command:

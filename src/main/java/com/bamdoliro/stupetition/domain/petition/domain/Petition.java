@@ -7,6 +7,7 @@ import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,9 @@ public class Petition extends BaseTimeEntity {
     @Column(length = 9, nullable = false)
     private Status status;
 
+    @Column(nullable = false)
+    private LocalDateTime endDate;
+
     @OneToMany(mappedBy = "petition")
     private List<Approver> approver = new ArrayList<>();
 
@@ -50,12 +54,13 @@ public class Petition extends BaseTimeEntity {
     private List<Answer> answer = new ArrayList<>();
 
     @Builder
-    public Petition(School school, User user, String title, String content) {
+    public Petition(School school, User user, String title, String content, LocalDateTime endDate) {
         this.school = school;
         this.user = user;
         this.title = title;
         this.content = content;
         this.status = Status.PETITION;
+        this.endDate = endDate;
     }
 
     public void updatePetition(String title, String content) {
@@ -65,5 +70,13 @@ public class Petition extends BaseTimeEntity {
 
     public void updateStatus(Status status) {
         this.status = status;
+    }
+
+    public Status getStatus() {
+        if (status == Status.PETITION && LocalDateTime.now().isAfter(endDate)) {
+            updateStatus(Status.EXPIRED);
+        }
+
+        return status;
     }
 }

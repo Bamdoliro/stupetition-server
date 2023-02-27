@@ -35,9 +35,23 @@ public class PetitionService {
         petitionRepository.save(request.toEntity(user));
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PetitionResponse> getPetitions(Status status) {
         User user = userFacade.getCurrentUser();
+
+        if (status == Status.PETITION) {
+            return petitionRepository.findPetitions(user.getSchool())
+                    .stream()
+                    .map(this::createPetitionResponse)
+                    .collect(Collectors.toList());
+        }
+
+        if (status == Status.EXPIRED) {
+            return petitionRepository.findExpiredPetitions(user.getSchool())
+                    .stream()
+                    .map(this::createPetitionResponse)
+                    .collect(Collectors.toList());
+        }
 
         return petitionRepository.findPetitionsBySchoolAndStatus(user.getSchool(), status)
                 .stream()
@@ -45,7 +59,7 @@ public class PetitionService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PetitionResponse> getWrotePetitions() {
         User user = userFacade.getCurrentUser();
 
@@ -53,7 +67,7 @@ public class PetitionService {
                 .stream().map(this::createPetitionResponse).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<PetitionResponse> getApprovedPetitions() {
         User user = userFacade.getCurrentUser();
 
@@ -63,7 +77,7 @@ public class PetitionService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public PetitionDetailResponse getPetitionDetail(Long id) {
         User user = userFacade.getCurrentUser();
         Petition petition = petitionFacade.findPetitionById(id);

@@ -18,4 +18,13 @@ public interface PetitionRepository extends JpaRepository<Petition, Long> {
 
     @Query("SELECT p FROM Petition p JOIN FETCH p.user WHERE p.id = :id")
     Optional<Petition> findPetitionById(Long id);
+
+    @Query("SELECT p FROM Petition p " +
+            "WHERE p.endDate < current_timestamp " +
+            "ORDER BY p.endDate DESC")
+    List<Petition> findExpiredPetitions(School school);
+
+    @Query("SELECT p FROM Petition p " +
+            "WHERE p.status = 'PETITION' AND p.endDate > current_timestamp ")
+    List<Petition> findPetitions(School school);
 }
