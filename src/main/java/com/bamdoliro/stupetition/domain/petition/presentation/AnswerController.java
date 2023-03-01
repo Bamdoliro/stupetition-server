@@ -8,18 +8,19 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/petition/{petition-id}/answer")
+@RequestMapping("/answer")
 @RequiredArgsConstructor
 public class AnswerController {
 
     private final AnswerService answerService;
 
     @PostMapping
-    public void answerPetition(
-            @PathVariable("petition-id") Long petitionId,
-            @RequestBody @Valid AnswerRequest request
-    ) {
-        answerService.answerPetition(petitionId, request);
+    public void answerPetition(@RequestBody @Valid AnswerRequest request) {
+        answerService.answerPetition(request);
     }
 
+    @DeleteMapping("/{answer-id}")
+    public void deleteAnswer(@PathVariable(name = "answer-id") Long answerId) {
+        answerService.deleteAnswer(answerId);
+    }
 }

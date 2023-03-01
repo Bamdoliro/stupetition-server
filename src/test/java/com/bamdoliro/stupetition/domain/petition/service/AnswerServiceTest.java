@@ -81,7 +81,7 @@ class AnswerServiceTest {
 
 
         // when
-        answerService.answerPetition(1L, new AnswerRequest("content"));
+        answerService.answerPetition(new AnswerRequest(1L, "content"));
 
         // then
         verify(answerRepository, times(1)).save(captor.capture());
