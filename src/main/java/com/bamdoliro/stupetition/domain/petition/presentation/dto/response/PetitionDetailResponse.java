@@ -41,7 +41,7 @@ public class PetitionDetailResponse {
                         .collect(Collectors.toList()))
                 .answer(petition.getStatus() == Status.ANSWERED ?
                         petition.getAnswer().stream()
-                                .map(AnswerResponse::of)
+                                .map(a -> AnswerResponse.of(a, user))
                                 .collect(Collectors.toList())
                         : null)
                 .writer(UserResponse.of(petition.getUser()))
