@@ -10,6 +10,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Getter
@@ -26,6 +27,7 @@ public class PetitionDetailResponse {
     private List<CommentResponse> comments;
     private List<AnswerResponse> answer;
     private UserResponse writer;
+    private Boolean hasPermission;
 
     public static PetitionDetailResponse of(Petition petition, ApproverRepository approverRepository, User user) {
         return PetitionDetailResponse.builder()
@@ -45,6 +47,7 @@ public class PetitionDetailResponse {
                                 .collect(Collectors.toList())
                         : null)
                 .writer(UserResponse.of(petition.getUser()))
+                .hasPermission(Objects.equals(user.getId(), petition.getUser().getId()))
                 .build();
     }
 }
