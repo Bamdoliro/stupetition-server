@@ -1,5 +1,7 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
+import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
@@ -21,6 +23,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserFacade userFacade;
     private final SchoolFacade schoolFacade;
+    private final CommentRepository commentRepository;
+    private final PetitionRepository petitionRepository;
 
     @Transactional
     public void createUser(CreateUserRequest request) {
@@ -49,6 +53,8 @@ public class UserService {
         User user = userFacade.getCurrentUser();
         user.checkPassword(request.getPassword(), passwordEncoder);
 
+        commentRepository.deleteByUser(user);
+        petitionRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 }
