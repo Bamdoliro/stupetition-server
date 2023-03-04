@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
-public class CreateUserRequest {
+public class CreateStudentCouncilRequest {
 
     @NotBlank(message = "아이디를 입력해 주세요.")
     @Length(min = 5, max = 20)

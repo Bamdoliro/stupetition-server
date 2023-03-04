@@ -1,7 +1,8 @@
 package com.bamdoliro.stupetition.domain.user.presentation;
 
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateUserRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateStudentCouncilRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.request.GenerateStudentsRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
@@ -18,8 +19,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public void createUser(@RequestBody @Valid CreateUserRequest request) {
-        userService.createUser(request);
+    public void createStudentCouncil(
+            @RequestBody @Valid CreateStudentCouncilRequest request) {
+        userService.createStudentCouncil(request);
+    }
+
+    @PostMapping
+    public void generateStudents(@RequestBody @Valid GenerateStudentsRequest request) {
+        userService.generateStudents(request);
     }
 
     @GetMapping

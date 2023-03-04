@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.user.domain;
 
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
+import com.bamdoliro.stupetition.domain.user.exception.AuthorityMismatchException;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
@@ -50,6 +51,12 @@ public class User extends BaseTimeEntity {
     public void checkPassword(String password, PasswordEncoder passwordEncoder) {
         if (!passwordEncoder.matches(password, this.password)) {
             throw PasswordMismatchException.EXCEPTION;
+        }
+    }
+
+    public void isStudentCouncil() {
+        if (authority != Authority.ROLE_STUDENT_COUNCIL) {
+            throw AuthorityMismatchException.EXCEPTION;
         }
     }
 }
