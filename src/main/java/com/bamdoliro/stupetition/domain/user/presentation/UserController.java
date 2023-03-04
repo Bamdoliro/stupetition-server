@@ -24,7 +24,7 @@ public class UserController {
         userService.createStudentCouncil(request);
     }
 
-    @PostMapping
+    @PostMapping("/student")
     public void generateStudents(@RequestBody @Valid GenerateStudentsRequest request) {
         userService.generateStudents(request);
     }

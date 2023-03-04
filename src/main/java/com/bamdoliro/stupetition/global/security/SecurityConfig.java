@@ -61,7 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers(HttpMethod.POST, "/auth").permitAll()
                 .antMatchers(HttpMethod.PUT, "/auth").permitAll()
-                .antMatchers(HttpMethod.POST, "/school", "/user").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/school", "/user/**").hasRole("ADMIN")
                 .antMatchers("/school/search").permitAll()
                 .antMatchers("/answer/**").hasRole("STUDENT_COUNCIL")
                 .anyRequest().authenticated()
