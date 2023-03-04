@@ -32,13 +32,6 @@ spring:
     host: localhost
     port: 6379
 
-  batch:
-    jdbc:
-      initialize-schema: always
-      table-prefix: batch_
-    job:
-      enabled: false
-
 debug: true
 ---
 spring:
@@ -69,13 +62,6 @@ spring:
   redis:
     host: redis
     port: 6379
-
-  batch:
-    jdbc:
-      initialize-schema: never
-      table-prefix: batch_
-    job:
-      enabled: false
 
 debug: true
 ---
