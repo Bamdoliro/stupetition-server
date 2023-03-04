@@ -2,7 +2,6 @@ package com.bamdoliro.stupetition.domain.user.domain;
 
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
@@ -26,8 +25,8 @@ public class User extends BaseTimeEntity {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
-    @Column(length = 50, nullable = false)
-    private String email;
+    @Column(length = 20, nullable = false, unique = true)
+    private String username;
 
     @Column(length = 60, nullable = false)
     private String password;
@@ -36,17 +35,12 @@ public class User extends BaseTimeEntity {
     @Column(name = "authority", length = 25, nullable = false)
     private Authority authority;
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 10, nullable = false)
-    private Status status;
-
     @Builder
-    public User(School school, String email, String password, Authority authority, Status status) {
+    public User(School school, String username, String password, Authority authority) {
         this.school = school;
-        this.email = email;
+        this.username = username;
         this.password = password;
         this.authority = authority;
-        this.status = status;
     }
 
     public void updatePassword(String password) {

@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.bamdoliro.stupetition.domain.petition.domain.type.Status.PETITION;
-import static com.bamdoliro.stupetition.domain.user.domain.type.Status.ATTENDING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,10 +49,9 @@ class PetitionServiceTest {
 
     private final User defaultUser = User.builder()
             .school(defaultSchool)
-            .email("test@test.com")
+            .username("test@test.com")
             .password("password")
             .authority(Authority.ROLE_STUDENT)
-            .status(ATTENDING)
             .build();
 
     private final Petition defaultPetition = Petition.builder()

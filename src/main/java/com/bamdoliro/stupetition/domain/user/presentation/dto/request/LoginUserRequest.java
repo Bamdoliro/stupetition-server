@@ -2,18 +2,18 @@ package com.bamdoliro.stupetition.domain.user.presentation.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
 public class LoginUserRequest {
 
-    @NotNull(message = "이메일을 입력해 주세요.")
-    @Email
-    private String email;
+    @NotBlank(message = "아이디를 입력해 주세요.")
+    private String username;
 
-    @NotNull(message = "비밀번호를 입력해 주세요.")
+    @NotBlank(message = "비밀번호를 입력해 주세요.")
     private String password;
 }

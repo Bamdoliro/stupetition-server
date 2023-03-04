@@ -3,21 +3,20 @@ package com.bamdoliro.stupetition.domain.user.presentation.dto.request;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
 public class CreateUserRequest {
 
-    @NotNull(message = "이메일을 입력해 주세요.")
-    @Email
-    private String email;
+    @NotBlank(message = "아이디를 입력해 주세요.")
+    @Length(min = 5, max = 20)
+    private String username;
 
     @NotNull(message = "비밀번호를 입력해 주세요.")
     @Length(min = 8, max = 20)
@@ -28,11 +27,10 @@ public class CreateUserRequest {
 
     public User toEntity(String password, School school) {
         return User.builder()
-                .email(email)
+                .username(username)
                 .password(password)
                 .school(school)
                 .authority(Authority.ROLE_STUDENT)
-                .status(Status.ATTENDING)
                 .build();
     }
 }

@@ -15,20 +15,19 @@ import org.springframework.stereotype.Component;
 public class UserFacade {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public User getCurrentUser() {
         AuthDetails auth = (AuthDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return auth.getUser();
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+    public User getUser(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 
-    public void checkUser(String email) {
-        userRepository.findByEmail(email)
+    public void checkUser(String username) {
+        userRepository.findByUsername(username)
                 .ifPresent(user -> { throw UserAlreadyExistsException.EXCEPTION; });
     }
 }

@@ -28,7 +28,7 @@ public class UserService {
 
     @Transactional
     public void createUser(CreateUserRequest request) {
-        userFacade.checkUser(request.getEmail());
+        userFacade.checkUser(request.getUsername());
         userRepository.save(request.toEntity(
                 passwordEncoder.encode(request.getPassword()),
                 schoolFacade.findSchoolById(request.getSchoolId())));

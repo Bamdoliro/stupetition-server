@@ -40,7 +40,7 @@ public class JwtTokenProvider {
 
     public String createToken(User user, long time) {
         Claims claims = Jwts.claims();
-        claims.put("email", user.getEmail());
+        claims.put("username", user.getUsername());
         claims.put("userId", user.getId());
         Date now = new Date();
 

@@ -30,7 +30,7 @@ public class PetitionFacade {
     }
 
     public void checkWriter(User user, Petition petition) {
-        if (!user.getEmail().equals(petition.getUser().getEmail())) {
+        if (!user.getUsername().equals(petition.getUser().getUsername())) {
             throw UserIsNotWriterException.EXCEPTION;
         }
     }

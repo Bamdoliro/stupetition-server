@@ -11,13 +11,13 @@ public class JwtValidateService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
 
-    public String getEmail(String token) {
+    public String getUsername(String token) {
         return jwtTokenProvider.extractAllClaims(token)
-                .get("email", String.class);
+                .get("username", String.class);
     }
 
     public boolean existsRefreshToken(String token) {
-        String refreshToken = redisService.getData(getEmail(token));
+        String refreshToken = redisService.getData(getUsername(token));
         return refreshToken != null;
     }
 

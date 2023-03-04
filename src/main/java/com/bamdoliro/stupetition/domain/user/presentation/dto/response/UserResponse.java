@@ -2,7 +2,6 @@ package com.bamdoliro.stupetition.domain.user.presentation.dto.response;
 
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
-import com.bamdoliro.stupetition.domain.user.domain.type.Status;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,17 +11,15 @@ public class UserResponse {
 
     private Long userId;
     private String schoolName;
-    private String email;
+    private String username;
     private Authority authority;
-    private Status status;
 
     public static UserResponse of(User user) {
         return UserResponse.builder()
                 .userId(user.getId())
                 .schoolName(user.getSchool().getName())
-                .email(user.getEmail())
+                .username(user.getUsername())
                 .authority(user.getAuthority())
-                .status(user.getStatus())
                 .build();
     }
 }

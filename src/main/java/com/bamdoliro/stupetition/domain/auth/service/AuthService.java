@@ -25,12 +25,12 @@ public class AuthService {
     private final JwtValidateService jwtValidateService;
 
     public TokenResponse loginUser(LoginUserRequest request) {
-        User user = userFacade.findUserByEmail(request.getEmail());
+        User user = userFacade.getUser(request.getUsername());
         user.checkPassword(request.getPassword(), passwordEncoder);
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-        redisService.setDataExpire(request.getEmail(), refreshToken, REFRESH_TOKEN_VALID_TIME);
+        redisService.setDataExpire(request.getUsername(), refreshToken, REFRESH_TOKEN_VALID_TIME);
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -41,13 +41,13 @@ public class AuthService {
 
     public void logoutUser() {
         User user = userFacade.getCurrentUser();
-        redisService.deleteData(user.getEmail());
+        redisService.deleteData(user.getUsername());
     }
 
     public TokenResponse refreshToken(String refreshToken) {
         return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(
-                        userFacade.findUserByEmail(jwtValidateService.getEmail(refreshToken))))
+                        userFacade.getUser(jwtValidateService.getUsername(refreshToken))))
                 .build();
     }
 }
