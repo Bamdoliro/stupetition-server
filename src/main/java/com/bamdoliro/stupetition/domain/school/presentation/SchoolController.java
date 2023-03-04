@@ -1,13 +1,12 @@
 package com.bamdoliro.stupetition.domain.school.presentation;
 
+import com.bamdoliro.stupetition.domain.school.presentation.dto.request.CreateSchoolRequest;
 import com.bamdoliro.stupetition.domain.school.presentation.dto.response.SchoolResponse;
 import com.bamdoliro.stupetition.domain.school.service.SchoolService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,5 +19,10 @@ public class SchoolController {
     @GetMapping("/search")
     public List<SchoolResponse> searchSchool(@RequestParam(name = "q") final String schoolName) {
         return schoolService.searchSchool(schoolName);
+    }
+
+    @PostMapping
+    public void createSchool(@RequestBody @Valid CreateSchoolRequest request) {
+        schoolService.createSchool(request);
     }
 }

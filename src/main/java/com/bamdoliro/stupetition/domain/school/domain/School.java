@@ -21,7 +21,7 @@ public class School extends BaseTimeEntity {
     @Column(name = "school_id")
     private Long id;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String name;
 
     @Column(length = 20, nullable = true)

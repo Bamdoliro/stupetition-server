@@ -18,7 +18,7 @@ public class CreateUserRequest {
     @Length(min = 5, max = 20)
     private String username;
 
-    @NotNull(message = "비밀번호를 입력해 주세요.")
+    @NotBlank(message = "비밀번호를 입력해 주세요.")
     @Length(min = 8, max = 20)
     private String password;
 
@@ -30,7 +30,7 @@ public class CreateUserRequest {
                 .username(username)
                 .password(password)
                 .school(school)
-                .authority(Authority.ROLE_STUDENT)
+                .authority(Authority.ROLE_STUDENT_COUNCIL)
                 .build();
     }
 }

@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.school.service;
 
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.school.domain.repository.SchoolRepository;
+import com.bamdoliro.stupetition.domain.school.presentation.dto.request.CreateSchoolRequest;
 import com.bamdoliro.stupetition.domain.school.presentation.dto.response.SchoolResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,10 @@ public class SchoolService {
         List<School> result = schoolRepository.findByNameContaining(schoolName);
         return result.stream().map(SchoolResponse::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void createSchool(CreateSchoolRequest request) {
+        schoolRepository.save(request.toEntity());
     }
 }
