@@ -10,13 +10,13 @@ public class SchoolResponse {
 
     private Long id;
     private String name;
-    private String emailDomain;
+    private String abbreviation;
 
     public static SchoolResponse fromEntity(School school) {
         return SchoolResponse.builder()
                 .id(school.getId())
                 .name(school.getName())
-                .emailDomain(school.getEmailDomain())
+                .abbreviation(school.getAbbreviation())
                 .build();
     }
 }

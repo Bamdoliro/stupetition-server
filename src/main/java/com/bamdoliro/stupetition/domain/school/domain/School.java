@@ -25,15 +25,15 @@ public class School extends BaseTimeEntity {
     private String name;
 
     @Column(length = 20, nullable = true)
-    private String emailDomain;
+    private String abbreviation;
 
     @OneToMany(mappedBy = "school")
     private List<User> membersOfSchool = new ArrayList<>();
 
     @Builder
-    public School(String name, String emailDomain) {
+    public School(String name, String abbreviation) {
         this.name = name;
-        this.emailDomain = emailDomain;
+        this.abbreviation = abbreviation;
     }
 
     public int getNumberOfStudents(UserRepository userRepository) {

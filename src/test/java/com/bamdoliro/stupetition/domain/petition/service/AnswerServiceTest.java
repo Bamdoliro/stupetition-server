@@ -40,7 +40,7 @@ class AnswerServiceTest {
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
-            .emailDomain("bssm.hs.kr")
+            .abbreviation("bssm")
             .build();
 
     private final User defaultUser = createUser(Authority.ROLE_STUDENT);
