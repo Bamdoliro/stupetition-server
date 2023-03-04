@@ -4,12 +4,14 @@ import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateStud
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.GenerateStudentsRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GeneratedUserResponse;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -25,8 +27,8 @@ public class UserController {
     }
 
     @PostMapping("/student")
-    public void generateStudents(@RequestBody @Valid GenerateStudentsRequest request) {
-        userService.generateStudents(request);
+    public List<GeneratedUserResponse> generateStudents(@RequestBody @Valid GenerateStudentsRequest request) {
+        return userService.generateStudents(request);
     }
 
     @GetMapping

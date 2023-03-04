@@ -12,12 +12,14 @@ import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateStud
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.GenerateStudentsRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequest;
+import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GeneratedUserResponse;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,14 +42,13 @@ public class UserService {
                 schoolFacade.findSchoolById(request.getSchoolId())));
     }
 
-
     @Transactional
-    public void generateStudents(GenerateStudentsRequest request) {
+    public List<GeneratedUserResponse> generateStudents(GenerateStudentsRequest request) {
         User user = userFacade.getCurrentUser();
         user.isStudentCouncil();
         School school = user.getSchool();
 
-        userRepository.saveAll(
+        List<User> generatedUserList = (List<User>) userRepository.saveAll(
                 IntStream.rangeClosed(1, request.getNumberOfStudents())
                         .mapToObj(index -> generateStudent(
                                 index,
@@ -57,6 +58,13 @@ public class UserService {
                         ))
                         .collect(Collectors.toList())
         );
+
+        return generatedUserList.stream()
+                .map(u -> GeneratedUserResponse.builder()
+                        .username(u.getUsername())
+                        .password(request.getDefaultPassword())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private User generateStudent(Integer index, Integer admissionYear, String defaultPassword, School school) {
