@@ -24,7 +24,7 @@ public class School extends BaseTimeEntity {
     @Column(length = 20, nullable = false, unique = true)
     private String name;
 
-    @Column(length = 20, nullable = true)
+    @Column(length = 20, nullable = false)
     private String abbreviation;
 
     @OneToMany(mappedBy = "school")
