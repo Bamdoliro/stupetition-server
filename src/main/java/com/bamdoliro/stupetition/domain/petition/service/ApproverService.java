@@ -42,7 +42,7 @@ public class ApproverService {
     }
 
     private void updateToWaitingPetition(Petition petition, School school) {
-        if ((school.getNumberOfStudents(userRepository)-1) * PetitionConstant.PETITION_AGREER_PERCENTAGE >= petition.getNumberOfApprover(approverRepository)) {
+        if ((school.getNumberOfStudents(userRepository)-1) * PetitionConstant.PETITION_AGREER_PERCENTAGE <= petition.getNumberOfApprover(approverRepository)) {
             petition.updateStatus(Status.WAITING);
         }
     }
