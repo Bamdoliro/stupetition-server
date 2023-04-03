@@ -2,25 +2,43 @@ version: '3'
 
 services:
   mysql:
-    container_name: bamdoliro_stupetition_mysql
-    image: mysql/mysql-server:5.7
+    image: mysql:8.0
     environment:
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_USER: "bamdoliro"
-      MYSQL_PASSWORD: "bamdoliro"
-      MYSQL_DATABASE: "bamdoliro_stupetition"
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_HOST: '%'
       TZ: Asia/Seoul
+    volumes:
+      - mysql-volume:/var/lib/mysql
     ports:
-      - "3308:3306"
+      - 3306:3306
     command:
       - "mysqld"
       - "--character-set-server=utf8mb4"
       - "--collation-server=utf8mb4_unicode_ci"
 
   redis:
-    image: redis:latest
+    image: redis:7.0-alpine
     container_name: bamdoliro_stupetition_redis
-    hostname: bamdoliro
-    command: redis-server --port 6379
+    command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
+    env_file:
+      - .env
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}:6379
+
+  application:
+    image: ${DOCKER_USERNAME}/${DOCKER_REPO}
+    expose:
+      - 8080
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - TZ="Asia/Seoul"
+
+volumes:
+  mysql-volume: { }
