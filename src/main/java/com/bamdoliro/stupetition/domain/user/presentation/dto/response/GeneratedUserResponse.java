@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class GeneratedUserResponse {
 
-    private String username;
+    private String email;
     private String password;
 }

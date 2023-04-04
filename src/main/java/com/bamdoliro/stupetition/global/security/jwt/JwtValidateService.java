@@ -13,7 +13,7 @@ public class JwtValidateService {
 
     public String getUsername(String token) {
         return jwtTokenProvider.extractAllClaims(token)
-                .get("username", String.class);
+                .get("email", String.class);
     }
 
     public boolean existsRefreshToken(String token) {

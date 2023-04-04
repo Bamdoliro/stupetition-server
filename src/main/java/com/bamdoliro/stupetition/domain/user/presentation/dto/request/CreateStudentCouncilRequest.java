@@ -27,7 +27,7 @@ public class CreateStudentCouncilRequest {
 
     public User toEntity(String password, School school) {
         return User.builder()
-                .username(username)
+                .email(username)
                 .password(password)
                 .school(school)
                 .authority(Authority.ROLE_STUDENT_COUNCIL)

@@ -2,16 +2,17 @@ package com.bamdoliro.stupetition.domain.user.presentation;
 
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateStudentCouncilRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.GenerateStudentsRequest;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.UpdateUserPasswordRequest;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.GeneratedUserResponse;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import com.bamdoliro.stupetition.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -26,19 +27,9 @@ public class UserController {
         userService.createStudentCouncil(request);
     }
 
-    @PostMapping("/student")
-    public List<GeneratedUserResponse> generateStudents(@RequestBody @Valid GenerateStudentsRequest request) {
-        return userService.generateStudents(request);
-    }
-
     @GetMapping
     public UserResponse getUser() {
         return userService.getUserInformation();
-    }
-
-    @PutMapping("/update/password")
-    public void updateUserPassword(@RequestBody @Valid UpdateUserPasswordRequest request) {
-        userService.updateUserPassword(request);
     }
 
     @DeleteMapping

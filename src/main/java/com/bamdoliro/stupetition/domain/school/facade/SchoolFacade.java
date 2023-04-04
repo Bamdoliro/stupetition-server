@@ -16,4 +16,9 @@ public class SchoolFacade {
         return schoolRepository.findById(id)
                 .orElseThrow(() -> SchoolNotFoundException.EXCEPTION);
     }
+
+    public School getSchoolByDomain(String domain) {
+        return schoolRepository.findByDomain(domain)
+                .orElseThrow(() -> SchoolNotFoundException.EXCEPTION);
+    }
 }

@@ -5,7 +5,7 @@ import com.bamdoliro.stupetition.global.error.exception.StupetitionException;
 
 public class UserAlreadyExistsException extends StupetitionException {
 
-    public final static UserAlreadyExistsException EXCEPTION = new UserAlreadyExistsException();
+    public final static StupetitionException EXCEPTION = new UserAlreadyExistsException();
 
     private UserAlreadyExistsException() {
         super(ErrorCode.USER_ALREADY_EXISTS);

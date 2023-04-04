@@ -17,6 +17,7 @@ public enum ErrorCode {
     PASSWORD_MISMATCH(401, "비밀번호가 틀렸습니다."),
     AUTHORITY_MISMATCH(401, "권한이 없습니다."),
     USER_NOT_LOGIN(401, "로그인 해야 합니다."),
+    TEACHER_CANNOT_SIGN_UP(422, "선생님은 회원가입할 수 없습니다."),
 
     SCHOOL_NOT_FOUND(404, "학교를 찾을 수 없습니다."),
 

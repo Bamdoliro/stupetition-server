@@ -15,14 +15,14 @@ public class CreateSchoolRequest {
     @Length(min = 5, max = 20)
     private String name;
 
-    @NotBlank(message = "약어를 입력해 주세요.")
+    @NotBlank(message = "학교 이메일 도메인을 입력해 주세요.")
     @Length(min = 1, max = 20)
-    private String abbreviation;
+    private String domain;
 
     public School toEntity() {
         return School.builder()
                 .name(name)
-                .abbreviation(abbreviation)
+                .domain(domain)
                 .build();
     }
 }

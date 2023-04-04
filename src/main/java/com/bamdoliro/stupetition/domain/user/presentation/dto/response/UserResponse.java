@@ -11,14 +11,14 @@ public class UserResponse {
 
     private Long userId;
     private String schoolName;
-    private String username;
+    private String email;
     private Authority authority;
 
     public static UserResponse of(User user) {
         return UserResponse.builder()
                 .userId(user.getId())
                 .schoolName(user.getSchool().getName())
-                .username(user.getUsername())
+                .email(user.getEmail())
                 .authority(user.getAuthority())
                 .build();
     }

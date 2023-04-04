@@ -7,7 +7,6 @@ import com.bamdoliro.stupetition.domain.user.exception.UserNotFoundException;
 import com.bamdoliro.stupetition.global.security.auth.AuthDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,13 +20,13 @@ public class UserFacade {
         return auth.getUser();
     }
 
-    public User getUser(String username) {
-        return userRepository.findByUsername(username)
+    public User getUser(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> UserNotFoundException.EXCEPTION);
     }
 
-    public void checkUser(String username) {
-        userRepository.findByUsername(username)
+    public void checkUser(String email) {
+        userRepository.findByEmail(email)
                 .ifPresent(user -> { throw UserAlreadyExistsException.EXCEPTION; });
     }
 }

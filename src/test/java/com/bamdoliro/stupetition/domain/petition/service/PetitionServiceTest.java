@@ -44,12 +44,12 @@ class PetitionServiceTest {
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
-            .abbreviation("bssm")
+            .domain("bssm.hs.kr")
             .build();
 
     private final User defaultUser = User.builder()
             .school(defaultSchool)
-            .username("test@test.com")
+            .email("test@test.com")
             .password("password")
             .authority(Authority.ROLE_STUDENT)
             .build();

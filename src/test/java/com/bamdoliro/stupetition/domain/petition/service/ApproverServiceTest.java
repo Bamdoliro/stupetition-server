@@ -42,7 +42,7 @@ class ApproverServiceTest {
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
-            .abbreviation("bssm")
+            .domain("bssm.hs.kr")
             .build();
 
     private final User defaultUser = createUser(Authority.ROLE_STUDENT);

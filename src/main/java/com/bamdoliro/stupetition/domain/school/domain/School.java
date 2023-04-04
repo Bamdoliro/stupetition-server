@@ -3,9 +3,19 @@ package com.bamdoliro.stupetition.domain.school.domain;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,15 +35,15 @@ public class School extends BaseTimeEntity {
     private String name;
 
     @Column(length = 20, nullable = false)
-    private String abbreviation;
+    private String domain;
 
     @OneToMany(mappedBy = "school")
     private List<User> membersOfSchool = new ArrayList<>();
 
     @Builder
-    public School(String name, String abbreviation) {
+    public School(String name, String domain) {
         this.name = name;
-        this.abbreviation = abbreviation;
+        this.domain = domain;
     }
 
     public int getNumberOfStudents(UserRepository userRepository) {
