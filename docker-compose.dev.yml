@@ -25,7 +25,9 @@ services:
       - "6379:6379"
 
   application:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     expose:
       - 8080
     ports:
