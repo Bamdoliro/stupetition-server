@@ -19,7 +19,8 @@ repositories {
 }
 
 dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -28,6 +29,22 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// Problem with hibernate-core 5.6.7.Final which was causing issue with 'startingWith'
+	// https://github.com/spring-projects/spring-data-jpa/issues/2472
+	// https://hibernate.atlassian.net/browse/HHH-15142
+	// TODO Temporarily revert to 5.6.5.Final until fixed
+	implementation 'org.hibernate:hibernate-core:5.6.5.Final'
+	
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:3.1.4'
 }
 
 tasks.named('test') {
