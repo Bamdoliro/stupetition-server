@@ -77,6 +77,7 @@ jobs:
             echo GOOGLE_REDIRECT=${{ secrets.GOOGLE_REDIRECT }} >> .env
             echo GOOGLE_SECRET=${{ secrets.GOOGLE_SECRET }} >> .env
             
+            echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
             echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
             
             docker-compose up -d
