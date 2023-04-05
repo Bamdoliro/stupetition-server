@@ -1,5 +1,6 @@
 package com.bamdoliro.stupetition.domain.user.domain;
 
+import com.bamdoliro.stupetition.domain.auth.exception.PasswordMismatchException;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.exception.AuthorityMismatchException;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,6 +66,12 @@ public class User extends BaseTimeEntity {
     public void isStudentCouncil() {
         if (authority != Authority.ROLE_STUDENT_COUNCIL) {
             throw AuthorityMismatchException.EXCEPTION;
+        }
+    }
+
+    public void checkPassword(String password, PasswordEncoder passwordEncoder) {
+        if (!passwordEncoder.matches(password, this.password)) {
+            throw PasswordMismatchException.EXCEPTION;
         }
     }
 }
