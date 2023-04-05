@@ -3,7 +3,9 @@ package com.bamdoliro.stupetition.domain.petition.domain;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.school.domain.School;
+import com.bamdoliro.stupetition.domain.school.domain.repository.SchoolRepository;
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -83,6 +85,11 @@ public class Petition extends BaseTimeEntity {
 
     public int getNumberOfApprover(ApproverRepository approverRepository) {
         return approverRepository.countByPetition(this);
+    }
+
+    public int getPercentageOfApprover(ApproverRepository approverRepository, UserRepository userRepository) {
+        return Math.toIntExact(Math.round((double) approverRepository.countByPetition(this)
+                / (double) this.school.getNumberOfStudents(userRepository) * 100.00));
     }
 
     public Boolean hasUserApproved(User user, ApproverRepository approverRepository) {

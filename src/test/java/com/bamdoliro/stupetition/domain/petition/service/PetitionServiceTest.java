@@ -10,6 +10,7 @@ import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.Petit
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponse;
 import com.bamdoliro.stupetition.domain.school.domain.School;
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import org.junit.jupiter.api.DisplayName;
@@ -41,6 +42,7 @@ class PetitionServiceTest {
     @Mock private ApproverRepository approverRepository;
     @Mock private UserFacade userFacade;
     @Mock private PetitionFacade petitionFacade;
+    @Mock private UserRepository userRepository;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -91,6 +93,7 @@ class PetitionServiceTest {
         given(petitionRepository.findPetitions(defaultSchool))
                 .willReturn(List.of(defaultPetition, defaultPetition));
         given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
+        given(userRepository.countBySchool(defaultSchool)).willReturn(100);
 
         // when
         List<PetitionResponse> petitionResponse = petitionService.getPetitions(PETITION);
@@ -108,6 +111,7 @@ class PetitionServiceTest {
         given(petitionRepository.findPetitionsByUser(defaultUser))
                 .willReturn(List.of(defaultPetition, defaultPetition));
         given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
+        given(userRepository.countBySchool(defaultSchool)).willReturn(100);
 
         // when
         List<PetitionResponse> petitionResponse = petitionService.getWrotePetitions();
@@ -124,7 +128,8 @@ class PetitionServiceTest {
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
         given(approverRepository.existsByUserAndPetition(defaultUser, defaultPetition)).willReturn(false);
-        given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(10);
+        given(userRepository.countBySchool(defaultSchool)).willReturn(100);
 
         // when
         PetitionDetailResponse response = petitionService.getPetitionDetail(1L);
@@ -135,7 +140,7 @@ class PetitionServiceTest {
         assertEquals(response.getContent(), defaultPetition.getContent());
         assertEquals(response.getStatus(), defaultPetition.getStatus());
         assertEquals(response.getApproved(), false);
-        assertEquals(response.getNumberOfApprover(), 1);
+        assertEquals(response.getPercentageOfApprover(), 10);
     }
 
     @DisplayName("[Service] Petition 수정")
