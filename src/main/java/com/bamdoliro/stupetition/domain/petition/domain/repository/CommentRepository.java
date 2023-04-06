@@ -9,4 +9,6 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
 
     Boolean findAllByPetition(Petition petition);
     void deleteByUser(User user);
+
+    void deleteByPetitionId(Long id);
 }

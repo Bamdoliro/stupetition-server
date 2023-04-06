@@ -3,6 +3,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
@@ -29,6 +30,7 @@ public class PetitionService {
     private final UserFacade userFacade;
     private final UserRepository userRepository;
     private final PetitionFacade petitionFacade;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void createPetition(CreatePetitionRequest request) {
@@ -110,6 +112,7 @@ public class PetitionService {
                 petitionFacade.findPetitionById(id)
         );
 
+        commentRepository.deleteByPetitionId(id);
         petitionRepository.deleteById(id);
     }
 

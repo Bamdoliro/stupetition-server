@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
+import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
@@ -28,6 +29,7 @@ import static com.bamdoliro.stupetition.domain.petition.domain.type.Status.PETIT
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.will;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,6 +45,7 @@ class PetitionServiceTest {
     @Mock private UserFacade userFacade;
     @Mock private PetitionFacade petitionFacade;
     @Mock private UserRepository userRepository;
+    @Mock private CommentRepository commentRepository;
 
     private final School defaultSchool = School.builder()
             .name("부산소프트웨어마이스터고등학교")
@@ -174,5 +177,6 @@ class PetitionServiceTest {
         // then
         verify(petitionFacade, times(1)).checkWriter(defaultUser, defaultPetition);
         verify(petitionRepository, times(1)).deleteById(1L);
+        verify(commentRepository, times(1)).deleteByPetitionId(1L);
     }
 }
