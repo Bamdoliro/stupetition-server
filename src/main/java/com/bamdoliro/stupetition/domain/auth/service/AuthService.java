@@ -108,7 +108,7 @@ public class AuthService {
 
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
-        redisService.setDataExpire(request.getUsername(), refreshToken, REFRESH_TOKEN_VALID_TIME);
+        redisService.setDataExpire(refreshToken, request.getUsername(), REFRESH_TOKEN_VALID_TIME);
 
         return TokenResponse.builder()
                 .accessToken(accessToken)
@@ -117,13 +117,13 @@ public class AuthService {
     }
 
     @Transactional
-    public void logoutUser() {
-        User user = userFacade.getCurrentUser();
-        redisService.deleteData(user.getEmail());
+    public void logoutUser(String refreshToken) {
+        redisService.deleteData(refreshToken);
     }
 
     @TransactionScoped
     public TokenResponse refreshToken(String refreshToken) {
+        jwtValidateService.existsRefreshToken(refreshToken);
         return TokenResponse.builder()
                 .accessToken(jwtTokenProvider.createAccessToken(
                         userFacade.getUser(jwtValidateService.getUsername(refreshToken))))
