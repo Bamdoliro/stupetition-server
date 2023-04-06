@@ -24,6 +24,7 @@ public class PetitionDetailResponse {
     private Status status;
     private Boolean approved;
     private int percentageOfApprover;
+    private int numberOfApprover;
     private LocalDateTime createdAt;
     private List<CommentResponse> comments;
     private List<AnswerResponse> answer;
@@ -38,6 +39,7 @@ public class PetitionDetailResponse {
                 .status(petition.getStatus())
                 .approved(petition.hasUserApproved(user, approverRepository))
                 .percentageOfApprover(petition.getPercentageOfApprover(approverRepository, userRepository))
+                .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
                         .map(c -> CommentResponse.of(c, user))

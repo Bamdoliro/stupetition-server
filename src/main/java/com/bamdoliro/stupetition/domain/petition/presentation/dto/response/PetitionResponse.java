@@ -17,6 +17,7 @@ public class PetitionResponse {
     private String title;
     private Status status;
     private int percentageOfApprover;
+    private int numberOfApprover;
     private LocalDateTime createdAt;
 
     public static PetitionResponse of(Petition petition, ApproverRepository approverRepository, UserRepository userRepository) {
@@ -25,6 +26,7 @@ public class PetitionResponse {
                 .title(petition.getTitle())
                 .status(petition.getStatus())
                 .percentageOfApprover(petition.getPercentageOfApprover(approverRepository, userRepository))
+                .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
                 .build();
     }
