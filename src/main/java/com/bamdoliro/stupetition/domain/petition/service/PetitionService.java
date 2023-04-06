@@ -11,6 +11,7 @@ import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.Update
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponse;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponse;
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class PetitionService {
     private final PetitionRepository petitionRepository;
     private final ApproverRepository approverRepository;
     private final UserFacade userFacade;
+    private final UserRepository userRepository;
     private final PetitionFacade petitionFacade;
 
     @Transactional
@@ -85,6 +87,7 @@ public class PetitionService {
         return PetitionDetailResponse.of(
                 petition,
                 approverRepository,
+                userRepository,
                 user
         );
     }
@@ -111,6 +114,6 @@ public class PetitionService {
     }
 
     private PetitionResponse createPetitionResponse(Petition p) {
-        return PetitionResponse.of(p, approverRepository);
+        return PetitionResponse.of(p, approverRepository, userRepository);
     }
 }

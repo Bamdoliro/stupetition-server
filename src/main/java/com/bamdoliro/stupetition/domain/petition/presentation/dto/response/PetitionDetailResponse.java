@@ -4,6 +4,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
 import com.bamdoliro.stupetition.domain.user.domain.User;
+import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class PetitionDetailResponse {
     private String content;
     private Status status;
     private Boolean approved;
+    private int percentageOfApprover;
     private int numberOfApprover;
     private LocalDateTime createdAt;
     private List<CommentResponse> comments;
@@ -29,13 +31,14 @@ public class PetitionDetailResponse {
     private UserResponse writer;
     private Boolean hasPermission;
 
-    public static PetitionDetailResponse of(Petition petition, ApproverRepository approverRepository, User user) {
+    public static PetitionDetailResponse of(Petition petition, ApproverRepository approverRepository, UserRepository userRepository, User user) {
         return PetitionDetailResponse.builder()
                 .id(petition.getId())
                 .title(petition.getTitle())
                 .content(petition.getContent())
                 .status(petition.getStatus())
                 .approved(petition.hasUserApproved(user, approverRepository))
+                .percentageOfApprover(petition.getPercentageOfApprover(approverRepository, userRepository))
                 .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
                 .comments(petition.getComment().stream()
