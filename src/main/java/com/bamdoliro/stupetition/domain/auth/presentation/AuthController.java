@@ -42,8 +42,10 @@ public class AuthController {
     }
 
     @DeleteMapping
-    public void logoutUser() {
-        authService.logoutUser();
+    public void logoutUser(
+            @RequestHeader(value = "Refresh-Token") String refreshToken
+    ) {
+        authService.logoutUser(refreshToken);
     }
 
     @PutMapping

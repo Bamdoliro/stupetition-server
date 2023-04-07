@@ -18,9 +18,10 @@ services:
       - "--collation-server=utf8mb4_unicode_ci"
 
   redis:
-    image: redis:latest
+    image: redis:7.0-alpine
     container_name: bamdoliro_stupetition_redis
-    hostname: bamdoliro
-    command: redis-server --port 6379
+    command: /bin/sh -c "redis-server --requirepass bamdoliro"
+    env_file:
+      - .env
     ports:
-      - "6379:6379"
+      - 6379:6379
