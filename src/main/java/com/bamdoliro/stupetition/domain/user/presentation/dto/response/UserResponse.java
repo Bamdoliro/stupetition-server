@@ -13,6 +13,7 @@ public class UserResponse {
     private String schoolName;
     private String email;
     private Authority authority;
+    private String name;
 
     public static UserResponse of(User user) {
         return UserResponse.builder()
@@ -20,6 +21,7 @@ public class UserResponse {
                 .schoolName(user.getSchool().getName())
                 .email(user.getEmail())
                 .authority(user.getAuthority())
+                .name(user.getName())
                 .build();
     }
 }
