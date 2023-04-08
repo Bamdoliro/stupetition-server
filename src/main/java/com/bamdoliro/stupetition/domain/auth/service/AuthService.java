@@ -15,6 +15,7 @@ import com.bamdoliro.stupetition.global.config.properties.AuthProperties;
 import com.bamdoliro.stupetition.global.feign.auth.GoogleAuthClient;
 import com.bamdoliro.stupetition.global.feign.auth.GoogleInformationClient;
 import com.bamdoliro.stupetition.global.feign.auth.dto.request.GoogleAuthRequest;
+import com.bamdoliro.stupetition.global.feign.auth.dto.response.GoogleInformationResponse;
 import com.bamdoliro.stupetition.global.redis.RedisService;
 import com.bamdoliro.stupetition.global.security.jwt.JwtTokenProvider;
 import com.bamdoliro.stupetition.global.security.jwt.JwtValidateService;
@@ -43,8 +44,8 @@ public class AuthService {
     private final SchoolFacade schoolFacade;
     private final PasswordEncoder passwordEncoder;
 
-    private static final String QUERY_STRING = "?client_id=%s&redirect_uri=%s" +
-            "&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email";
+    private static final String QUERY_STRING = "?client_id=%s&redirect_uri=%s&response_type=code&" +
+            "scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
     public String getGoogleAuthLink() {
         return authProperties.getGoogleBaseUrl() +
@@ -55,18 +56,19 @@ public class AuthService {
     public TokenResponse authGoogleWithBssm(String code) {
         String accessToken = googleAuthClient.getAccessToken(
                 createGoogleAuthRequest(code)).getAccessToken();
-        String email = googleInformationClient.getUserInformation(accessToken).getEmail();
-        School school = validateEmailAndGetSchool(email);
+        GoogleInformationResponse information = googleInformationClient.getUserInformation(accessToken);
+        School school = validateEmailAndGetSchool(information.getEmail());
 
-        Optional<User> user = userRepository.findByEmail(email);
+        Optional<User> user = userRepository.findByEmail(information.getEmail());
 
         if (user.isEmpty()) {
             user = Optional.of(userRepository.save(
                     User.builder()
+                            .name(information.getName())
                             .school(school)
-                            .email(email)
+                            .email(information.getEmail())
                             .authority(Authority.ROLE_STUDENT)
-                            .admissionYear(Integer.valueOf(email.substring(0, 4)))
+                            .admissionYear(Integer.valueOf(information.getEmail().substring(0, 4)))
                             .build()
             ));
         }

@@ -37,6 +37,9 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long id;
 
+    @Column(length = 20, nullable = false)
+    private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
@@ -55,7 +58,8 @@ public class User extends BaseTimeEntity {
     private Integer admissionYear;
 
     @Builder
-    public User(School school, String email, String password, Authority authority, Integer admissionYear) {
+    public User(String name, School school, String email, String password, Authority authority, Integer admissionYear) {
+        this.name = name;
         this.school = school;
         this.email = email;
         this.password = password;
