@@ -1,6 +1,6 @@
 package com.bamdoliro.stupetition.domain.petition.presentation;
 
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequest;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponse;
@@ -25,7 +25,7 @@ public class PetitionController {
     }
 
     @GetMapping
-    public List<PetitionResponse> getPetitions(@RequestParam Status status) {
+    public List<PetitionResponse> getPetitions(@RequestParam PetitionStatus status) {
         return petitionService.getPetitions(status);
     }
 

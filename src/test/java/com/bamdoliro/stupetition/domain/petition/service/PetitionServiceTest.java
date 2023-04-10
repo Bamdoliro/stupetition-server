@@ -4,6 +4,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequest;
@@ -25,11 +26,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.bamdoliro.stupetition.domain.petition.domain.type.Status.PETITION;
+import static com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus.PETITION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.will;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -175,8 +175,6 @@ class PetitionServiceTest {
         petitionService.deletePetition(1L);
 
         // then
-        verify(petitionFacade, times(1)).checkWriter(defaultUser, defaultPetition);
-        verify(petitionRepository, times(1)).deleteById(1L);
-        verify(commentRepository, times(1)).deleteByPetitionId(1L);
+        assertEquals(PetitionStatus.DELETED, defaultPetition.getStatus());
     }
 }

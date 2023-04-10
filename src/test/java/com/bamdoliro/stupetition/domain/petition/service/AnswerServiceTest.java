@@ -3,8 +3,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 import com.bamdoliro.stupetition.domain.petition.domain.Answer;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.AnswerRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
-import com.bamdoliro.stupetition.domain.petition.facade.AnswerFacade;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequest;
 import com.bamdoliro.stupetition.domain.school.domain.School;
@@ -24,7 +23,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -89,6 +87,6 @@ class AnswerServiceTest {
         assertEquals(studentCouncil, savedAnswer.getUser());
         assertEquals(defaultPetition, savedAnswer.getPetition());
         assertEquals("content", savedAnswer.getComment());
-        assertEquals(defaultPetition.getStatus(), Status.ANSWERED);
+        assertEquals(defaultPetition.getStatus(), PetitionStatus.ANSWERED);
     }
 }

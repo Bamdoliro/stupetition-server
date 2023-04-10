@@ -35,6 +35,6 @@ public class CommentService {
         Comment comment = commentFacade.getComment(commentId);
         commentFacade.checkOwnComment(user, comment);
 
-        commentRepository.delete(comment);
+        comment.delete();
     }
 }

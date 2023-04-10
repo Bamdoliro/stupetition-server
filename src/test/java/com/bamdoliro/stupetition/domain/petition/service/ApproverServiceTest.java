@@ -3,7 +3,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.ApproverFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.school.domain.School;
@@ -94,7 +94,7 @@ class ApproverServiceTest {
         Approver savedApprover = captor.getValue();
         assertEquals(student, savedApprover.getUser());
         assertEquals(defaultPetition, savedApprover.getPetition());
-        assertEquals(Status.WAITING, defaultPetition.getStatus());
+        assertEquals(PetitionStatus.WAITING, defaultPetition.getStatus());
     }
 
     @DisplayName("[Service] Petition 에 동의 - Waiting 으로 변경되지 않는 경우")
@@ -122,6 +122,6 @@ class ApproverServiceTest {
         Approver savedApprover = captor.getValue();
         assertEquals(student, savedApprover.getUser());
         assertEquals(defaultPetition, savedApprover.getPetition());
-        assertEquals(Status.PETITION, defaultPetition.getStatus());
+        assertEquals(PetitionStatus.PETITION, defaultPetition.getStatus());
     }
 }
