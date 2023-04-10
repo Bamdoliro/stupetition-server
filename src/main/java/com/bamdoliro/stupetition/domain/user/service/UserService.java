@@ -1,13 +1,10 @@
 package com.bamdoliro.stupetition.domain.user.service;
 
-import com.bamdoliro.stupetition.domain.petition.domain.repository.CommentRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
 import com.bamdoliro.stupetition.domain.school.facade.SchoolFacade;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.request.CreateStudentCouncilRequest;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.request.DeleteUserRequest;
 import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,8 +19,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserFacade userFacade;
     private final SchoolFacade schoolFacade;
-    private final CommentRepository commentRepository;
-    private final PetitionRepository petitionRepository;
 
     @Transactional
     public void createStudentCouncil(CreateStudentCouncilRequest request) {
@@ -37,14 +32,5 @@ public class UserService {
     public UserResponse getUserInformation() {
         User user = userFacade.getCurrentUser();
         return UserResponse.of(user);
-    }
-
-    @Transactional
-    public void deleteUser(DeleteUserRequest request) {
-        User user = userFacade.getCurrentUser();
-
-        commentRepository.deleteByUser(user);
-        petitionRepository.deleteByUser(user);
-        userRepository.delete(user);
     }
 }
