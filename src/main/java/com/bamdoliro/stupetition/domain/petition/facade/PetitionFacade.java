@@ -2,7 +2,7 @@ package com.bamdoliro.stupetition.domain.petition.facade;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.PetitionRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.exception.PetitionNotFoundException;
 import com.bamdoliro.stupetition.domain.petition.exception.StatusMismatchException;
 import com.bamdoliro.stupetition.domain.petition.exception.UserIsNotWriterException;
@@ -23,8 +23,8 @@ public class PetitionFacade {
                 .orElseThrow(() -> PetitionNotFoundException.EXCEPTION);
     }
 
-    public void checkStatus(Status expectedStatus, Status actualStatue) {
-        if (expectedStatus != actualStatue) {
+    public void checkStatus(PetitionStatus expectedPetitionStatus, PetitionStatus actualStatue) {
+        if (expectedPetitionStatus != actualStatue) {
             throw StatusMismatchException.EXCEPTION;
         }
     }

@@ -1,9 +1,8 @@
 package com.bamdoliro.stupetition.domain.petition.domain;
 
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.school.domain.School;
-import com.bamdoliro.stupetition.domain.school.domain.repository.SchoolRepository;
 import com.bamdoliro.stupetition.domain.user.domain.User;
 import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.global.entity.BaseTimeEntity;
@@ -42,7 +41,7 @@ public class Petition extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(length = 9, nullable = false)
-    private Status status;
+    private PetitionStatus status;
 
     @Column(nullable = false)
     private LocalDateTime endDate;
@@ -62,7 +61,7 @@ public class Petition extends BaseTimeEntity {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.status = Status.PETITION;
+        this.status = PetitionStatus.PETITION;
         this.endDate = endDate;
     }
 
@@ -71,13 +70,17 @@ public class Petition extends BaseTimeEntity {
         this.content = content;
     }
 
-    public void updateStatus(Status status) {
+    public void updateStatus(PetitionStatus status) {
         this.status = status;
     }
 
-    public Status getStatus() {
-        if (status == Status.PETITION && LocalDateTime.now().isAfter(endDate)) {
-            updateStatus(Status.EXPIRED);
+    public void delete() {
+        this.status = PetitionStatus.DELETED;
+    }
+
+    public PetitionStatus getStatus() {
+        if (status == PetitionStatus.PETITION && LocalDateTime.now().isAfter(endDate)) {
+            updateStatus(PetitionStatus.EXPIRED);
         }
 
         return status;

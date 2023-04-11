@@ -3,7 +3,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 import com.bamdoliro.stupetition.domain.petition.domain.Answer;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.AnswerRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.AnswerFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.AnswerRequest;
@@ -27,7 +27,7 @@ public class AnswerService {
         User user = userFacade.getCurrentUser();
         Petition petition = petitionFacade.findPetitionById(request.getPetitionId());
 
-        petition.updateStatus(Status.ANSWERED);
+        petition.updateStatus(PetitionStatus.ANSWERED);
         answerRepository.save(request.toEntity(user, petition));
     }
 

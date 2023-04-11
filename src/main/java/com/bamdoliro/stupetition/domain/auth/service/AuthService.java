@@ -10,7 +10,6 @@ import com.bamdoliro.stupetition.domain.user.domain.repository.UserRepository;
 import com.bamdoliro.stupetition.domain.user.domain.type.Authority;
 import com.bamdoliro.stupetition.domain.user.exception.AuthorityMismatchException;
 import com.bamdoliro.stupetition.domain.user.facade.UserFacade;
-import com.bamdoliro.stupetition.domain.user.presentation.dto.response.UserResponse;
 import com.bamdoliro.stupetition.global.config.properties.AuthProperties;
 import com.bamdoliro.stupetition.global.feign.auth.GoogleAuthClient;
 import com.bamdoliro.stupetition.global.feign.auth.GoogleInformationClient;

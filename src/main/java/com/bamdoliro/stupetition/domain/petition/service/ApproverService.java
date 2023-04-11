@@ -4,7 +4,7 @@ import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
 import com.bamdoliro.stupetition.domain.petition.domain.constant.PetitionConstant;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
-import com.bamdoliro.stupetition.domain.petition.domain.type.Status;
+import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.ApproverFacade;
 import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.school.domain.School;
@@ -44,7 +44,7 @@ public class ApproverService {
     private void updateToWaitingPetition(Petition petition, School school) {
         if ((school.getNumberOfStudents(userRepository)-1) * PetitionConstant.PETITION_AGREER_PERCENTAGE
                 <= petition.getNumberOfApprover(approverRepository)) {
-            petition.updateStatus(Status.WAITING);
+            petition.updateStatus(PetitionStatus.WAITING);
         }
     }
 }
