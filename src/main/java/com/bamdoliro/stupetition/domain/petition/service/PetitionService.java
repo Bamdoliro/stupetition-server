@@ -10,6 +10,7 @@ import com.bamdoliro.stupetition.domain.petition.facade.PetitionFacade;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.CreatePetitionRequest;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.request.UpdatePetitionRequest;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.AnswerResponse;
+import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.CommentResponse;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionDetailResponse;
 import com.bamdoliro.stupetition.domain.petition.presentation.dto.response.PetitionResponse;
 import com.bamdoliro.stupetition.domain.user.domain.User;
@@ -47,14 +48,14 @@ public class PetitionService {
         User user = userFacade.getCurrentUser();
 
         if (status == PetitionStatus.PETITION) {
-            return petitionRepository.findPetitions(user.getSchool())
+            return petitionRepository.findPetitions()
                     .stream()
                     .map(this::createPetitionResponse)
                     .collect(Collectors.toList());
         }
 
         if (status == PetitionStatus.EXPIRED) {
-            return petitionRepository.findExpiredPetitions(user.getSchool())
+            return petitionRepository.findExpiredPetitions()
                     .stream()
                     .map(this::createPetitionResponse)
                     .collect(Collectors.toList());
@@ -98,7 +99,8 @@ public class PetitionService {
                 .percentageOfApprover(petition.getPercentageOfApprover(approverRepository, userRepository))
                 .numberOfApprover(petition.getNumberOfApprover(approverRepository))
                 .createdAt(petition.getCreatedAt())
-                .comments(commentRepository.findByPetition(petition))
+                .comments(commentRepository.findByPetition(petition).stream()
+                        .map(c -> CommentResponse.of(c, user)).collect(Collectors.toList()))
                 .answer(petition.getStatus() == PetitionStatus.ANSWERED ?
                         petition.getAnswer().stream()
                                 .map(a -> AnswerResponse.of(a, user))

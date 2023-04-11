@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -42,6 +44,7 @@ public class Comment extends BaseTimeEntity {
     @Column(length = 500, nullable = false)
     private String comment;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 10, nullable = false)
     private CommentStatus status;
 

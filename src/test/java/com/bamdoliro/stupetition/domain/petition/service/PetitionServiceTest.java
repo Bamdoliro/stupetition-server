@@ -93,7 +93,7 @@ class PetitionServiceTest {
     void givenPetitionStatus_whenSearchingPetitionPetitionInUserSchool_thenReturnsPetitionPetitionInTheSchool() {
         // given
         given(userFacade.getCurrentUser()).willReturn(defaultUser);
-        given(petitionRepository.findPetitions(defaultSchool))
+        given(petitionRepository.findPetitions())
                 .willReturn(List.of(defaultPetition, defaultPetition));
         given(approverRepository.countByPetition(defaultPetition)).willReturn(1);
         given(userRepository.countBySchool(defaultSchool)).willReturn(100);
@@ -102,7 +102,7 @@ class PetitionServiceTest {
         List<PetitionResponse> petitionResponse = petitionService.getPetitions(PETITION);
 
         // then
-        verify(petitionRepository, times(1)).findPetitions(defaultUser.getSchool());
+        verify(petitionRepository, times(1)).findPetitions();
         assertEquals(petitionResponse.get(1).getTitle(), defaultPetition.getTitle());
     }
 
