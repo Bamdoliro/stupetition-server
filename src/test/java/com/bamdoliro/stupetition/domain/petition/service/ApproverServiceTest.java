@@ -81,8 +81,8 @@ class ApproverServiceTest {
         given(petitionFacade.findPetitionById(1L)).willReturn(defaultPetition);
         willDoNothing().given(approverFacade).checkApprovePetition(student, defaultPetition);
         given(approverRepository.save(any())).willReturn(agreer);
-        given(userRepository.countBySchool(defaultSchool)).willReturn(201);
-        given(approverRepository.countByPetition(defaultPetition)).willReturn(100);
+        given(userRepository.countBySchool(defaultSchool)).willReturn(101);
+        given(approverRepository.countByPetition(defaultPetition)).willReturn(70);
 
         // when
         approverService.approvePetition(1L);
