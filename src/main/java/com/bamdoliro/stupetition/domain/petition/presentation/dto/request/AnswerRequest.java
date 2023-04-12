@@ -20,7 +20,7 @@ public class AnswerRequest {
     private Long petitionId;
 
     @NotBlank
-    @Size(min = 2, max = 500)
+    @Size(min = 2, max = 4000)
     private String comment;
 
     public Answer toEntity(User user, Petition petition) {
