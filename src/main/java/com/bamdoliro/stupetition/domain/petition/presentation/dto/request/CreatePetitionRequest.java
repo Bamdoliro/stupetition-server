@@ -20,7 +20,7 @@ public class CreatePetitionRequest {
     private String title;
 
     @NotNull(message = "내용을 입력해 주세요.")
-    @Size(min = 2, max = 4000)
+    @Size(min = 100, max = 4000)
     private String content;
 
     public Petition toEntity(User user) {
