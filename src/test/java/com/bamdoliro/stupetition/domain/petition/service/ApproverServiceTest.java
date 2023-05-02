@@ -2,6 +2,7 @@ package com.bamdoliro.stupetition.domain.petition.service;
 
 import com.bamdoliro.stupetition.domain.petition.domain.Approver;
 import com.bamdoliro.stupetition.domain.petition.domain.Petition;
+import com.bamdoliro.stupetition.domain.petition.domain.constant.PetitionConstant;
 import com.bamdoliro.stupetition.domain.petition.domain.repository.ApproverRepository;
 import com.bamdoliro.stupetition.domain.petition.domain.type.PetitionStatus;
 import com.bamdoliro.stupetition.domain.petition.facade.ApproverFacade;
@@ -82,7 +83,7 @@ class ApproverServiceTest {
         willDoNothing().given(approverFacade).checkApprovePetition(student, defaultPetition);
         given(approverRepository.save(any())).willReturn(agreer);
         given(userRepository.countBySchool(defaultSchool)).willReturn(101);
-        given(approverRepository.countByPetition(defaultPetition)).willReturn(70);
+        given(approverRepository.countByPetition(defaultPetition)).willReturn((int) (PetitionConstant.PETITION_AGREER_PERCENTAGE * 100));
 
         // when
         approverService.approvePetition(1L);
